@@ -286,6 +286,9 @@ function renderProgress() {
     <div class="card stat"><b>${qd.length ? Math.round(qd.reduce((a, l) => a + state.quizRes[l.id].best, 0) / qd.length) + '%' : '—'}</b><span>середній найкращий</span></div>
     <div class="card stat"><b>${ql.filter(l => (state.quizRes[l.id]?.best || 0) >= 80).length}</b><span>на 80%+</span></div></div>`;
 
+  // навчання: прочитане і тести
+  html += learnProgressHTML();
+
   // прогрес по предметах
   html += `<div class="section-title">Завдання по предметах</div><div class="card">`;
   for (const s of V.subjects()) {
@@ -334,6 +337,59 @@ function renderProgress() {
       <div style="display:flex;justify-content:space-between"><b>Ступінь ${st}</b><span class="small muted">${past} з ${ls.length} лекцій</span></div>
       <div class="bar" style="margin-top:8px"><span style="width:${past / ls.length * 100}%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></span></div>
       <div class="small muted" style="margin-top:6px">${fmtDay(parseDate(ls[0].date))} – ${fmtDay(parseDate(ls[ls.length - 1].date))}</div></div>`;
+  }
+  return html;
+}
+
+
+// Готовність по лекції: половина за прочитаний конспект, половина за найкращий результат тесту
+function lessonReady(l) {
+  const r = state.read[l.id] ? 50 : 0;
+  const q = QUIZ[l.id] ? (state.quizRes[l.id]?.best || 0) / 2 : (state.read[l.id] ? 50 : 0);
+  return r + q;
+}
+function ring(pct, label) {
+  const R = 42, C = 2 * Math.PI * R;
+  return `<svg class="ring" viewBox="0 0 100 100" aria-label="${label}">
+    <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b18cf2"/><stop offset="1" stop-color="#f7a8c8"/></linearGradient></defs>
+    <circle cx="50" cy="50" r="${R}" fill="none" stroke="var(--accent-soft)" stroke-width="11"/>
+    <circle cx="50" cy="50" r="${R}" fill="none" stroke="url(#rg)" stroke-width="11" stroke-linecap="round"
+      stroke-dasharray="${C * pct / 100} ${C}" transform="rotate(-90 50 50)"/>
+    <text x="50" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="currentColor">${pct}%</text></svg>`;
+}
+function learnProgressHTML() {
+  const lect = V.learn().filter(l => l.kind !== 'qa');
+  if (!lect.length) return '';
+  const qa = V.learn().filter(l => l.kind === 'qa');
+  const readN = lect.filter(l => state.read[l.id]).length;
+  const ql = lect.filter(l => QUIZ[l.id]), qd = ql.filter(l => state.quizRes[l.id]);
+  const avg = qd.length ? Math.round(qd.reduce((a, l) => a + state.quizRes[l.id].best, 0) / qd.length) : 0;
+  const ready = Math.round(lect.reduce((a, l) => a + lessonReady(l), 0) / lect.length);
+  const mood = ready >= 70 ? 'Ти вже майже готова, так тримати 💜' : ready >= 30 ? 'Гарний рух! Ще трохи читання й тестів.' : 'Почни з одного конспекту і тесту до нього, це хвилин 30.';
+  let html = `<div class="section-title">Навчання</div>
+    <div class="card ready">${ring(ready, 'Готовність')}<div>
+      <div class="t">Готовність до заліків</div>
+      <div class="small muted">Половина за прочитаний конспект, половина за найкращий результат тесту.</div>
+      <div class="small" style="margin-top:6px">${mood}</div></div></div>
+    <div class="card" style="margin-top:8px">
+      <div class="bar-row"><span>Прочитано</span><div class="bar"><span style="width:${readN / lect.length * 100}%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></span></div><span class="n">${readN}/${lect.length}</span></div>
+      <div class="bar-row"><span>Тести</span><div class="bar"><span style="width:${ql.length ? qd.length / ql.length * 100 : 0}%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></span></div><span class="n">${qd.length}/${ql.length}</span></div>
+      <div class="bar-row"><span>Середній бал</span><div class="bar"><span style="width:${avg}%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></span></div><span class="n">${qd.length ? avg + '%' : '—'}</span></div>
+      ${qa.map(l => `<div class="bar-row"><span>Картки: ${esc(subj(l.subject).short)}</span><div class="bar"><span style="width:${cardsKnown(l.id) / l.count * 100}%;background:${subj(l.subject).color}"></span></div><span class="n">${cardsKnown(l.id)}/${l.count}</span></div>`).join('')}
+    </div>`;
+  for (const s of V.subjects()) {
+    const ls = lect.filter(l => l.subject === s.id); if (!ls.length) continue;
+    const r = ls.filter(l => state.read[l.id]).length, t = ls.filter(l => state.quizRes[l.id]).length;
+    html += `<details class="card subj-prog" style="--c:${s.color};margin-top:8px">
+      <summary><span class="dot"></span><b>${esc(s.short)}</b><span class="small muted">📖 ${r}/${ls.length} · ✏️ ${t}/${ls.filter(l => QUIZ[l.id]).length}</span></summary>
+      <div class="lp-list">${ls.map(l => {
+        const q = state.quizRes[l.id];
+        const short = l.title.replace(/^(Лекція \d+|Практичне \d+[^.]*)\.\s*/, '$1: ').split('.')[0];
+        return `<div class="lp" data-open-learn="${l.id}">
+          <span class="lp-ico">${state.read[l.id] ? '✅' : '⚪'}</span>
+          <span class="lp-t">${esc(short)}</span>
+          <span class="lp-q ${q ? (q.best >= 80 ? 'good' : q.best >= 50 ? 'mid' : 'low') : ''}">${q ? q.best + '%' : QUIZ[l.id] ? 'тест' : ''}</span></div>`;
+      }).join('')}</div></details>`;
   }
   return html;
 }

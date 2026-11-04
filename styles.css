@@ -244,3 +244,20 @@ dialog::backdrop { background: rgba(10, 10, 20, .45); }
 .quiz-result { text-align: center; }
 .quiz-result .big { font-size: 40px; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .mascot.onb { width: 96px; height: 96px; }
+.ready { display: flex; gap: 14px; align-items: center; }
+.ring { width: 96px; height: 96px; flex: none; color: var(--text); }
+.ready .t { font-weight: 800; font-size: 17px; margin-bottom: 4px; }
+.subj-prog summary { display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none; }
+.subj-prog summary::-webkit-details-marker { display: none; }
+.subj-prog summary .small { margin-left: auto; }
+.subj-prog summary::after { content: "›"; color: var(--muted); font-size: 20px; transition: transform .2s; }
+.subj-prog[open] summary::after { transform: rotate(90deg); }
+.subj-prog .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.lp-list { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.lp { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-top: 1px dashed var(--line); cursor: pointer; font-size: 14px; }
+.lp-t { flex: 1; }
+.lp-q { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+.lp-q:empty { display: none; }
+.lp-q.good { background: color-mix(in srgb, var(--ok) 35%, var(--card)); color: var(--text); }
+.lp-q.mid { background: color-mix(in srgb, var(--warn) 35%, var(--card)); color: var(--text); }
+.lp-q.low { background: color-mix(in srgb, #f08aa8 25%, var(--card)); color: var(--text); }
