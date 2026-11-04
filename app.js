@@ -49,11 +49,15 @@ const state = {
   budget: store.get('budget', 60),
   learnFilter: store.get('learnFilter', 'all'),
   program: store.get('program', 'all'),
+  profile: store.get('profile', null), // 'knu' — лише Каразін, 'all' — Каразін і УКУ
+  quizRes: store.get('quizRes', {}),
   reading: null,
   deck: null,
+  quiz: null,
 };
 let DATA = null;
 let LEARN = [];
+let QUIZ = {};
 const cache = {};
 
 // ---------- дати ----------
@@ -276,6 +280,11 @@ function renderProgress() {
     <div class="card stat"><b>${stepsAll.filter(s => state.steps[s.id]).length}</b><span>кроків з ${stepsAll.length}</span></div>
     <div class="card stat"><b>${lect.filter(l => state.read[l.id]).length}</b><span>конспектів з ${lect.length}</span></div>
     <div class="card stat"><b>${qa.reduce((a, l) => a + cardsKnown(l.id), 0)}</b><span>карток з ${qa.reduce((a, l) => a + l.count, 0)}</span></div></div>`;
+  const ql = quizLessons(), qd = ql.filter(l => state.quizRes[l.id]);
+  if (ql.length) html += `<div class="stats" style="margin-top:8px">
+    <div class="card stat"><b>${qd.length}</b><span>тестів з ${ql.length}</span></div>
+    <div class="card stat"><b>${qd.length ? Math.round(qd.reduce((a, l) => a + state.quizRes[l.id].best, 0) / qd.length) + '%' : '—'}</b><span>середній найкращий</span></div>
+    <div class="card stat"><b>${ql.filter(l => (state.quizRes[l.id]?.best || 0) >= 80).length}</b><span>на 80%+</span></div></div>`;
 
   // прогрес по предметах
   html += `<div class="section-title">Завдання по предметах</div><div class="card">`;
@@ -381,11 +390,17 @@ function addSheet() {
 function settingsSheet() {
   const theme = store.get('theme', 'auto');
   const perm = 'Notification' in window ? Notification.permission : 'unsupported';
-  const ics = new URL('calendar.ics', location.href).href;
+  const ics = new URL(state.profile === 'knu' ? 'calendar-knu.ics' : 'calendar.ics', location.href).href;
+  const knuLink = new URL('?p=knu', location.href.split('?')[0]).href;
   const zoomSubjects = DATA.subjects.filter(s => DATA.events.some(e => e.subject === s.id && e.format === 'Zoom'));
   openSheet(`<h2>Налаштування</h2>
     <label>Тема</label>
     <div class="seg">${[['auto', 'Як у системі'], ['light', 'Світла'], ['dark', 'Темна']].map(([k, n]) => `<button data-theme="${k}" class="${theme === k ? 'on' : ''}">${n}</button>`).join('')}</div>
+
+    <label>Що показувати</label>
+    <div class="seg">${[['knu', '🎓 Лише Каразін'], ['all', 'Каразін і УКУ']].map(([k, n]) => `<button data-profile="${k}" class="${state.profile === k ? 'on' : ''}">${n}</button>`).join('')}</div>
+    <p class="small muted" style="margin:6px 0 8px">Для подруг з групи: посилання одразу відкриває версію лише з Каразіним. Це просто вибір вигляду, а не пароль.</p>
+    <button class="btn ghost block" data-copy="${esc(knuLink)}">Скопіювати посилання «лише Каразін»</button>
 
     <label>Нагадування в додатку</label>
     ${perm === 'unsupported' ? '<p class="small muted">Цей браузер не вміє показувати сповіщення.</p>' :
@@ -403,12 +418,12 @@ function settingsSheet() {
 
     <p class="small muted" style="margin-top:16px">Дані оновлено ${fmtDay(parseDate(DATA.updated))}. ${(DATA.notes || []).map(esc).join(' ')}</p>
     <div class="actions"><button class="btn" data-close>Готово</button></div>`);
+  sheet.querySelectorAll('[data-profile]').forEach(b => b.onclick = () => { setProfile(b.dataset.profile); settingsSheet(); });
   sheet.querySelectorAll('[data-theme]').forEach(b => b.onclick = () => { store.set('theme', b.dataset.theme); applyTheme(); settingsSheet(); });
   sheet.querySelectorAll('[data-link]').forEach(i => i.onchange = () => { state.links[i.dataset.link] = i.value.trim(); store.set('links', state.links); render(); });
   const n = $('[data-notify]', sheet);
   if (n) n.onclick = async () => { await Notification.requestPermission(); checkReminders(); settingsSheet(); };
-  const c = $('[data-copy]', sheet);
-  if (c) c.onclick = async () => { try { await navigator.clipboard.writeText(c.dataset.copy); toast('Скопійовано'); } catch { prompt('Скопіюй посилання:', c.dataset.copy); } };
+  sheet.querySelectorAll('[data-copy]').forEach(c => c.onclick = async () => { try { await navigator.clipboard.writeText(c.dataset.copy); toast('Скопійовано'); } catch { prompt('Скопіюй посилання:', c.dataset.copy); } });
 }
 
 // ---------- дії ----------
@@ -561,7 +576,8 @@ async function renderLearn() {
     return `<div class="backbar"><button data-back>‹ Назад</button><span class="chip" style="--c:${s.color}"><span class="dot"></span>${esc(s.short)}</span></div>
       <h2 style="margin:4px 4px 12px;font-size:21px;line-height:1.3">${esc(l.title)}</h2>
       <article class="reader">${html}</article>
-      <p style="margin-top:16px"><button class="btn block ${state.read[l.id] ? 'ghost' : ''}" data-mark-read="${l.id}">${state.read[l.id] ? 'Прочитано ✓ (натисни, щоб зняти)' : 'Я прочитала 📖'}</button></p>`;
+      <p style="margin-top:16px"><button class="btn block ${state.read[l.id] ? 'ghost' : ''}" data-mark-read="${l.id}">${state.read[l.id] ? 'Прочитано ✓ (натисни, щоб зняти)' : 'Я прочитала 📖'}</button></p>
+      ${QUIZ[l.id] ? `<p style="margin-top:8px"><button class="btn block soft" data-start-quiz="${l.id}">Перевір себе: ${QUIZ[l.id].length} питань ✏️</button></p>` : ''}`;
   }
   if (state.deck) return renderDeck();
   const subjects = V.subjects().filter(s => LEARN.some(l => l.subject === s.id));
@@ -633,13 +649,118 @@ function afterRender() {
   };
 }
 
+
+// ---------- тести ----------
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const quizLessons = () => V.learn().filter(l => QUIZ[l.id]);
+function startQuiz(id, only) {
+  // only — номери питань, які треба повторити (помилки)
+  let items;
+  if (id === 'mix') items = shuffle(quizLessons().flatMap(l => QUIZ[l.id].map((_, qi) => ({ lid: l.id, qi })))).slice(0, 10);
+  else items = (only || QUIZ[id].map((_, qi) => qi)).map(qi => ({ lid: id, qi }));
+  if (id !== 'mix') items = shuffle(items);
+  items.forEach(it => it.perm = shuffle([0, 1, 2, 3]));
+  state.quiz = { id, items, pos: 0, picked: null, score: 0, wrong: [] };
+  state.tab = 'tests'; store.set('tab', 'tests'); state.reading = null; state.deck = null;
+  render(); window.scrollTo({ top: 0 });
+}
+function pickAnswer(k) {
+  const z = state.quiz; if (z.picked !== null) return;
+  const it = z.items[z.pos], q = QUIZ[it.lid][it.qi];
+  z.picked = k;
+  if (it.perm[k] === q.a) z.score++; else z.wrong.push(it);
+  render();
+}
+function nextQuestion() {
+  const z = state.quiz;
+  z.pos++; z.picked = null;
+  if (z.pos === z.items.length) {
+    const r = state.quizRes[z.id] || { best: 0 };
+    const pct = Math.round(z.score / z.items.length * 100);
+    state.quizRes[z.id] = { best: Math.max(r.best || 0, pct), last: pct, at: iso(today()) };
+    store.set('quizRes', state.quizRes);
+  }
+  render(); window.scrollTo({ top: 0 });
+}
+function renderTests() {
+  if (state.quiz) return renderQuiz();
+  const ls = quizLessons();
+  if (!ls.length) return cheer('Тестів поки немає. Щойно з\'являться конспекти, я складу до них питання.', 'sleepy');
+  let html = `<div class="card hero quiz-hero">${mascot('happy')}<div><div class="t">Змішаний тест</div>
+    <div class="small">10 випадкових питань з усіх лекцій${state.program === 'all' ? '' : ' цієї програми'}</div>
+    <button class="btn" data-start-quiz="mix" style="margin-top:10px">Почати ✏️</button></div></div>`;
+  for (const s of V.subjects()) {
+    const items = ls.filter(l => l.subject === s.id); if (!items.length) continue;
+    const done = items.filter(l => state.quizRes[l.id]).length;
+    html += `<div class="section-title" style="display:flex;justify-content:space-between">${esc(s.short)}<span>${done}/${items.length} пройдено</span></div><div class="stack">`;
+    html += items.map(l => {
+      const r = state.quizRes[l.id], n = QUIZ[l.id].length;
+      const ico = !r ? '✏️' : r.best >= 80 ? '🌟' : r.best >= 50 ? '🙂' : '🌱';
+      return `<div class="card lesson" style="--c:${s.color}" data-start-quiz="${l.id}"><div class="ico">${ico}</div>
+        <div><div class="t">${esc(l.title)}</div><div class="meta">${n} питань${r ? ` · найкраще ${r.best}% · востаннє ${r.last}%` : ' · ще не проходила'}</div>
+        ${r ? `<div class="mini"><span style="width:${r.best}%"></span></div>` : ''}</div></div>`;
+    }).join('') + `</div>`;
+  }
+  html += `<p class="small muted" style="margin:16px 4px">Питання склала Claude за конспектами лекцій. Якщо якесь здається неточним, звір із конспектом і скажи мені.</p>`;
+  return html;
+}
+function renderQuiz() {
+  const z = state.quiz, n = z.items.length;
+  const title = z.id === 'mix' ? 'Змішаний тест' : lesson(z.id)?.title || '';
+  let html = `<div class="backbar"><button data-quiz-exit>‹ До тестів</button><span class="small muted">${Math.min(z.pos + 1, n)} з ${n}</span></div>
+    <div class="mini" style="margin:0 4px 14px"><span style="width:${z.pos / n * 100}%"></span></div>`;
+  if (z.pos === n) {
+    const pct = Math.round(z.score / n * 100);
+    const msg = pct >= 90 ? 'Майже все правильно! Ти чудово знаєш цю тему 💜' : pct >= 70 ? 'Дуже добре! Лишилось трохи підтягнути.' : pct >= 40 ? 'Непогано для початку. Перечитай конспект і спробуй ще раз.' : 'Тема ще свіжа, це нормально. Почитай конспект, а потім повернись сюди.';
+    html += `<div class="card quiz-result"><div class="big">${z.score} з ${n}</div><div class="muted">${title ? esc(title) : ''}</div></div>` + cheer(msg, pct >= 40 ? 'happy' : 'sleepy');
+    html += `<div class="stack" style="margin-top:12px">
+      ${z.wrong.length ? `<button class="btn block" data-quiz-wrong>Повторити помилки (${z.wrong.length})</button>` : ''}
+      <button class="btn block ghost" data-start-quiz="${z.id}">Пройти ще раз</button>
+      ${z.id !== 'mix' ? `<button class="btn block ghost" data-open-learn="${z.id}">Відкрити конспект 📖</button>` : ''}</div>`;
+    return html;
+  }
+  const it = z.items[z.pos], q = QUIZ[it.lid][it.qi];
+  html += `<div class="card quiz">
+    <div class="lec">${esc(z.id === 'mix' ? lesson(it.lid)?.title : title)}</div>
+    <div class="q">${esc(q.q)}</div>
+    <div class="opts">${it.perm.map((oi, k) => {
+      let cls = '';
+      if (z.picked !== null) { if (oi === q.a) cls = 'right'; else if (k === z.picked) cls = 'wrong'; else cls = 'dim'; }
+      return `<button class="opt ${cls}" data-pick="${k}" ${z.picked !== null ? 'disabled' : ''}>${esc(q.o[oi])}</button>`;
+    }).join('')}</div>
+    ${z.picked !== null ? `<div class="expl"><b>${it.perm[z.picked] === q.a ? 'Правильно! ' : 'Не зовсім. '}</b>${esc(q.e)}</div>` : ''}
+  </div>`;
+  if (z.picked !== null) html += `<div class="flash-actions"><button class="btn block" data-quiz-next>${z.pos + 1 === n ? 'Результат' : 'Далі'}</button></div>`;
+  return html;
+}
+
+// ---------- профіль ----------
+function applyProfile() {
+  if (state.profile === 'knu') { state.program = 'knu'; store.set('program', 'knu'); }
+  $('#progbar').hidden = state.profile === 'knu';
+}
+function setProfile(p) {
+  state.profile = p; store.set('profile', p);
+  if (p === 'all') { state.program = 'all'; store.set('program', 'all'); }
+  state.filter = 'all'; state.learnFilter = 'all'; state.reading = null; state.deck = null; state.quiz = null;
+  applyProfile(); render();
+}
+function profileSheet() {
+  openSheet(`<div style="text-align:center">${mascot('happy', 'wiggle onb')}</div>
+    <h2 style="text-align:center">Привіт! Що ти вчиш?</h2>
+    <p class="small muted" style="text-align:center;margin-top:0">Додаток покаже тільки твої предмети. Змінити можна будь-коли в налаштуваннях.</p>
+    <div class="stack"><button class="btn block" data-profile="knu">🎓 Магістратура Каразіна</button>
+    <button class="btn block ghost" data-profile="all">🎓 Каразін і 🪖 курс УКУ</button></div>`);
+  sheet.querySelectorAll('[data-profile]').forEach(b => b.onclick = () => { setProfile(b.dataset.profile); sheet.close(); });
+}
+
 // ---------- головний цикл ----------
-const TITLES = { today: 'Сьогодні', schedule: 'Розклад', tasks: 'Завдання', learn: 'Вчити', progress: 'Прогрес' };
+const TITLES = { today: 'Сьогодні', schedule: 'Розклад', tasks: 'Завдання', learn: 'Вчити', tests: 'Тести', progress: 'Прогрес' };
 function render() {
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
   document.querySelectorAll('#progbar button').forEach(b => b.classList.toggle('on', b.dataset.prog === state.program));
   $('#screen-title').innerHTML = (state.tab === 'today' ? mascot('happy', 'wiggle') : '') + TITLES[state.tab];
-  const fn = { today: renderToday, schedule: renderSchedule, tasks: renderTasks, learn: renderLearn, progress: renderProgress }[state.tab];
+  const fn = { today: renderToday, schedule: renderSchedule, tasks: renderTasks, learn: renderLearn, tests: renderTests, progress: renderProgress }[state.tab];
   const out = fn();
   if (out instanceof Promise) out.then(h => { view.innerHTML = h; afterRender(); }); else { view.innerHTML = out; afterRender(); }
 }
@@ -647,7 +768,7 @@ function render() {
 document.querySelector('.tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
   state.tab = b.dataset.tab; store.set('tab', state.tab); if (state.tab === 'schedule') state.week = 0;
-  state.reading = null; state.deck = null;
+  state.reading = null; state.deck = null; state.quiz = null;
   render(); window.scrollTo({ top: 0 });
 });
 view.addEventListener('click', e => {
@@ -659,7 +780,12 @@ view.addEventListener('click', e => {
   if (e.target.closest('[data-toggle-done]')) { state.showDone = !state.showDone; store.set('showDone', state.showDone); return render(); }
   if (e.target.closest('[data-add]')) return addSheet();
   const st = e.target.closest('[data-step]'); if (st) { toggleStep(st.dataset.step); return render(); }
-  const ol = e.target.closest('[data-open-learn]'); if (ol) return openLearn(ol.dataset.openLearn);
+  const sq = e.target.closest('[data-start-quiz]'); if (sq) return startQuiz(sq.dataset.startQuiz);
+  const pk = e.target.closest('[data-pick]'); if (pk) return pickAnswer(+pk.dataset.pick);
+  if (e.target.closest('[data-quiz-next]')) return nextQuestion();
+  if (e.target.closest('[data-quiz-exit]')) { state.quiz = null; render(); return window.scrollTo({ top: 0 }); }
+  if (e.target.closest('[data-quiz-wrong]')) { const z = state.quiz; const w = z.wrong; if (z.id === 'mix') { state.quiz = { id: 'mix', items: shuffle(w).map(it => ({ ...it, perm: shuffle([0, 1, 2, 3]) })), pos: 0, picked: null, score: 0, wrong: [] }; render(); return window.scrollTo({ top: 0 }); } return startQuiz(z.id, w.map(it => it.qi)); }
+  const ol = e.target.closest('[data-open-learn]'); if (ol) { state.quiz = null; return openLearn(ol.dataset.openLearn); }
   const lf = e.target.closest('[data-lfilter]'); if (lf) { state.learnFilter = lf.dataset.lfilter; store.set('learnFilter', state.learnFilter); return render(); }
   if (e.target.closest('[data-back]')) { state.reading = null; state.deck = null; render(); return window.scrollTo({ top: 0 }); }
   if (e.target.closest('[data-mark-read]')) { const id = e.target.closest('[data-mark-read]').dataset.markRead; state.read[id] = !state.read[id]; store.set('read', state.read); if (state.read[id]) toast('Прочитано 📖'); return render(); }
@@ -683,11 +809,18 @@ async function init() {
     const r = await fetch('data/data.json', { cache: 'no-cache' });
     DATA = await r.json();
     try { LEARN = await (await fetch('data/learn/index.json', { cache: 'no-cache' })).json(); } catch { LEARN = []; }
+    try { QUIZ = await (await fetch('data/learn/quiz.json', { cache: 'no-cache' })).json(); } catch { QUIZ = {}; }
   } catch {
     view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sleepy');
     return;
   }
+  // ?p=knu — посилання на версію лише з Каразіним, ?p=all — обидві програми
+  const p = new URLSearchParams(location.search).get('p');
+  if (p === 'knu' || p === 'all') { state.profile = p; store.set('profile', p); if (p === 'all') { state.program = 'all'; store.set('program', 'all'); } history.replaceState(null, '', location.pathname); }
+  if (state.profile === 'knu' && !['today', 'schedule', 'tasks', 'learn', 'tests', 'progress'].includes(state.tab)) state.tab = 'today';
+  applyProfile();
   render();
+  if (!state.profile) profileSheet();
   checkReminders();
   setInterval(() => { checkReminders(); if (state.tab === 'today') render(); }, 60_000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { render(); checkReminders(); } });

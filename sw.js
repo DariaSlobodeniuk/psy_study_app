@@ -1,6 +1,6 @@
 // Кешує додаток, щоб він відкривався без інтернету. Дані завжди пробує взяти свіжі.
-const CACHE = 'study-v5';
-const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'data/data.json', 'data/learn/index.json'];
+const CACHE = 'study-v6';
+const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'data/data.json', 'data/learn/index.json', 'data/learn/quiz.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(a => new Request(a, { cache: 'reload' })))).then(() => self.skipWaiting()));
