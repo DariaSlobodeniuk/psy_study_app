@@ -11,11 +11,32 @@ const MONTHS = ['січня', 'лютого', 'березня', 'квітня', 
 const STATUS = ['Не почато', 'В процесі', 'Готово'];
 
 // ---------- маскот ----------
-// Котика намалювала River: шість настроїв у icons/cat/*.webp
-const CAT = { happy: 'love', love: 'love', question: 'question', sleepy: 'sleepy', excited: 'excited', sad: 'sad', proud: 'proud' };
+// Котика намалювала River. Він зібраний з її деталей (icons/cat/rig), щоб хвостик, вушка й голова рухались окремо.
+// [файл, left%, top%, width%, height%] на квадратному полотні
+const KIT = {"tail":["tail",58.29,50.9,39.42,34.2],"body":["body",14.14,42.81,71.72,54.39],"earL":["earL",18.01,9.68,19.97,24.65],"earR":["earR",61.59,9.68,20.82,24.65],"head":["head_cut",19.01,12.81,61.99,54.39],"eyeL":["eyeL",33.22,39.28,11.06,11.44],"eyeR":["eyeR",56.21,38.7,10.08,12.6],"upL":["upL",33.44,40.43,10.62,9.14],"upR":["upR",56.26,40.64,9.99,8.71],"gtL":["gt",34.08,41.67,9.35,7.65],"ltR":["lt",56.58,41.78,9.35,7.44],"angL":["angL",33.35,41.77,10.8,8.46],"angR":["angR",56.03,41.95,10.44,8.1],"arcL":["arcL",33.53,44.61,10.44,3.78],"arcR":["arcR",56.39,44.79,9.72,3.42],"blushL":["blushL",27.57,49.23,7.35,5.55],"blushR":["blushR",65.3,49.23,6.9,5.55],"mouthW":["mouthW",46.41,49.19,7.17,2.62],"mouthOpen":["mouthOpen",45.65,49.05,8.7,6.9],"mouthO":["mouthO",47.88,49.19,4.25,5.12],"mouthTiny":["mouthTiny",48.27,49.6,3.45,3.3],"heart":["heart",12.5,4.6,9.0,9.8],"heart2":["heart",79.69,20.69,5.62,6.12],"spark":["spark",75.74,10.54,7.52,8.92],"spark2":["spark2",18.19,23.62,5.62,6.75],"qmark":["qmark",75.75,5.76,9.5,14.49],"zzz":["zzz",72.07,7.61,16.86,13.77],"scribble":["scribble",75.6,6.4,8.8,11.2],"bang":["bang",71.05,5.2,10.4,9.6]};
+const MOODS = {
+  love: ['eyeL', 'eyeR', 'mouthW', 'heart', 'heart2'],
+  proud: ['eyeL', 'eyeR', 'mouthW', 'spark', 'spark2'],
+  question: ['eyeL', 'eyeR', 'mouthO', 'qmark'],
+  excited: ['gtL', 'ltR', 'mouthOpen', 'bang'],
+  sad: ['upL', 'upR', 'mouthTiny', 'scribble'],
+  sleepy: ['arcL', 'arcR', 'mouthW', 'zzz'],
+};
+const MOOD_ALIAS = { happy: 'love' };
+const DECO = new Set(['heart', 'heart2', 'spark', 'spark2', 'qmark', 'zzz', 'scribble', 'bang']);
+function kitPart(k, cls = '', inner = '') {
+  const [f, l, t, w, h] = KIT[k];
+  const img = `<img src="icons/cat/rig/${f}.webp" alt="" draggable="false">`;
+  return `<div class="kp k-${k} ${cls}" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${inner || img}</div>`;
+}
 function mascot(mood = 'happy', cls = '') {
-  const m = CAT[mood] || 'love';
-  return `<img class="mascot cat cat-${m} ${cls}" src="icons/cat/${m}.webp" alt="" aria-hidden="true" draggable="false">`;
+  const m = MOODS[MOOD_ALIAS[mood] || mood] ? (MOOD_ALIAS[mood] || mood) : 'love';
+  const face = MOODS[m].filter(k => !DECO.has(k));
+  const deco = MOODS[m].filter(k => DECO.has(k));
+  return `<div class="mascot kit kit-${m} ${cls}" aria-hidden="true">
+    ${kitPart('tail')}${kitPart('body')}
+    <div class="k-headgrp">${kitPart('earL')}${kitPart('earR')}${kitPart('head')}${kitPart('blushL')}${kitPart('blushR')}${face.map(k => kitPart(k, k.startsWith('mouth') ? 'k-mouth' : 'k-eye')).join('')}</div>
+    ${deco.map(k => kitPart(k, 'k-deco')).join('')}</div>`;
 }
 
 // ---------- збережений стан ----------
