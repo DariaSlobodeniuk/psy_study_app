@@ -648,7 +648,7 @@ async function renderLearn() {
           <div class="mini"><span style="width:${known / l.count * 100}%"></span></div></div></div>`;
       }
       const r = state.read[l.id];
-      return `<div class="card lesson" style="--c:${s.color}" data-open-learn="${l.id}"><div class="ico">${r ? '✅' : l.kind === 'practice' ? '🧩' : '📖'}</div>
+      return `<div class="card lesson" style="--c:${s.color}" data-open-learn="${l.id}"><div class="ico">${r ? '✅' : l.kind === 'practice' ? '🧩' : l.kind === 'ref' ? '🧰' : '📖'}</div>
         <div><div class="t">${esc(l.title)}</div><div class="meta">${l.date ? fmtDay(parseDate(l.date)) + ' · ' : ''}~${l.minutes} хв читання${r ? ' · прочитано' : ''}</div></div></div>`;
     }).join('');
     html += `</div>`;

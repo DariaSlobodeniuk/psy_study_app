@@ -116,8 +116,8 @@
   "title": "Лекція 4. Кризова психологічна допомога та диференційна оцінка",
   "date": "2026-10-27",
   "file": "mil-4.html",
-  "points": 17,
-  "minutes": 42
+  "points": 18,
+  "minutes": 46
  },
  {
   "id": "mil-5",
@@ -126,8 +126,28 @@
   "title": "Лекція 5. Дебрифінг та післяподієві втручання",
   "date": "2026-10-29",
   "file": "mil-5.html",
+  "points": 11,
+  "minutes": 25
+ },
+ {
+  "id": "mil-6",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 6. Суїцидальна поведінка та кризові ризики",
+  "date": "2026-11-03",
+  "file": "mil-6.html",
   "points": 7,
-  "minutes": 19
+  "minutes": 30
+ },
+ {
+  "id": "mil-ref",
+  "subject": "mil",
+  "kind": "ref",
+  "title": "Довідник методик діагностики і література курсу",
+  "date": null,
+  "file": "mil-ref.html",
+  "points": 5,
+  "minutes": 14
  },
  {
   "id": "meth-qa",
