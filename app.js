@@ -706,7 +706,16 @@ const quizLessons = () => V.learn().filter(l => QUIZ[l.id]);
 function startQuiz(id, only) {
   // only — номери питань, які треба повторити (помилки)
   let items;
-  if (id === 'mix') items = shuffle(quizLessons().flatMap(l => QUIZ[l.id].map((_, qi) => ({ lid: l.id, qi })))).slice(0, 10);
+  if (id === 'mix') {
+    // беремо питання, яких ще не було в попередніх змішаних тестах; коли всі пройдено, починаємо коло спочатку
+    const all = quizLessons().flatMap(l => QUIZ[l.id].map((_, qi) => ({ lid: l.id, qi })));
+    let seen = new Set(store.get('mixSeen', []));
+    let fresh = all.filter(it => !seen.has(it.lid + ':' + it.qi));
+    if (fresh.length < 10) { seen = new Set(fresh.map(it => it.lid + ':' + it.qi)); fresh = shuffle(fresh).concat(shuffle(all.filter(it => !seen.has(it.lid + ':' + it.qi)))); seen = new Set(); }
+    items = shuffle(fresh.slice(0, 10));
+    items.forEach(it => seen.add(it.lid + ':' + it.qi));
+    store.set('mixSeen', [...seen]);
+  }
   else items = (only || QUIZ[id].map((_, qi) => qi)).map(qi => ({ lid: id, qi }));
   if (id !== 'mix') items = shuffle(items);
   items.forEach(it => it.perm = shuffle([0, 1, 2, 3]));
@@ -740,7 +749,7 @@ function renderTests() {
   const ls = quizLessons();
   if (!ls.length) return testSeg() + cheer('Тестів поки немає. Щойно з\'являться конспекти, я складу до них питання.', 'sleepy');
   let html = testSeg() + `<div class="card hero quiz-hero">${mascot('question')}<div><div class="t">Змішаний тест</div>
-    <div class="small">10 випадкових питань з усіх лекцій${state.program === 'all' ? '' : ' цієї програми'}</div>
+    <div class="small">10 питань з усіх лекцій, щоразу нові${state.program === 'all' ? '' : ' цієї програми'}</div>
     <button class="btn" data-start-quiz="mix" style="margin-top:10px">Почати ✏️</button></div></div>`;
   for (const s of V.subjects()) {
     const items = ls.filter(l => l.subject === s.id); if (!items.length) continue;
@@ -768,8 +777,9 @@ function renderQuiz() {
     html += `<div class="card quiz-result"><div class="big">${z.score} з ${n}</div><div class="muted">${title ? esc(title) : ''}</div></div>` + cheer(msg, pct >= 90 ? 'excited' : pct >= 70 ? 'proud' : pct >= 50 ? 'love' : 'sad');
     html += `<div class="stack" style="margin-top:12px">
       ${z.wrong.length ? `<button class="btn block" data-quiz-wrong>Повторити помилки (${z.wrong.length})</button>` : ''}
-      <button class="btn block ghost" data-start-quiz="${z.id}">Пройти ще раз</button>
-      ${z.id !== 'mix' ? `<button class="btn block ghost" data-open-learn="${z.id}">Відкрити конспект 📖</button>` : ''}</div>`;
+      ${z.id === 'mix' ? `<button class="btn block ${z.wrong.length ? 'ghost' : ''}" data-start-quiz="mix">Ще 10 нових питань ✨</button>` : `<button class="btn block ghost" data-start-quiz="${z.id}">Пройти ще раз</button>
+      <button class="btn block ghost" data-open-learn="${z.id}">Відкрити конспект 📖</button>`}
+      <button class="btn block ghost" data-quiz-exit>До всіх тестів</button></div>`;
     return html;
   }
   const it = z.items[z.pos], q = QUIZ[it.lid][it.qi];
