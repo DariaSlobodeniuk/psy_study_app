@@ -1,0 +1,130 @@
+[
+ {
+  "id": "gend-1",
+  "subject": "gend",
+  "kind": "lecture",
+  "title": "Лекція 1. Що таке гендер. Парадигми, розділи і психоаналітичні теорії",
+  "date": "2026-10-22",
+  "file": "gend-1.html",
+  "points": 5,
+  "minutes": 10
+ },
+ {
+  "id": "gend-2",
+  "subject": "gend",
+  "kind": "lecture",
+  "title": "Лекція 2. Біосоціальні і соціальні теорії. Сандра Бем, андрогінність, гендерна соціалізація",
+  "date": "2026-10-22",
+  "file": "gend-2.html",
+  "points": 7,
+  "minutes": 10
+ },
+ {
+  "id": "gend-3",
+  "subject": "gend",
+  "kind": "lecture",
+  "title": "Лекція 3. Статеві й гендерні відмінності: тіло, психіка, робота, емоції, спілкування",
+  "date": "2026-10-24",
+  "file": "gend-3.html",
+  "points": 5,
+  "minutes": 10
+ },
+ {
+  "id": "gend-4",
+  "subject": "gend",
+  "kind": "lecture",
+  "title": "Лекція 4. Гендерні ролі й стереотипи, образи в рекламі, стосунки і шлюб, агресія",
+  "date": "2026-10-24",
+  "file": "gend-4.html",
+  "points": 6,
+  "minutes": 11
+ },
+ {
+  "id": "gend-5",
+  "subject": "gend",
+  "kind": "lecture",
+  "title": "Лекція 5. Гендерна ідентичність: поняття, підходи, ідентифікація",
+  "date": "2026-10-25",
+  "file": "gend-5.html",
+  "points": 6,
+  "minutes": 9
+ },
+ {
+  "id": "gend-p1",
+  "subject": "gend",
+  "kind": "practice",
+  "title": "Практичне 1 (25.10). Обговорення опитувальника Бем і методики гендерної ідентифікації",
+  "date": "2026-10-25",
+  "file": "gend-p1.html",
+  "points": 5,
+  "minutes": 7
+ },
+ {
+  "id": "corr-1",
+  "subject": "corr",
+  "kind": "lecture",
+  "title": "Лекція 1. Форми психологічної допомоги. Психологічне консультування",
+  "date": "2026-10-20",
+  "file": "corr-1.html",
+  "points": 7,
+  "minutes": 9
+ },
+ {
+  "id": "corr-2",
+  "subject": "corr",
+  "kind": "lecture",
+  "title": "Лекція 2. Психокорекція, психотерапія і порівняння форм допомоги",
+  "date": "2026-10-20",
+  "file": "corr-2.html",
+  "points": 7,
+  "minutes": 9
+ },
+ {
+  "id": "mil-1",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 1. Роль військового психолога в сучасній війні",
+  "date": "2026-10-13",
+  "file": "mil-1.html",
+  "points": 5,
+  "minutes": 11
+ },
+ {
+  "id": "mil-2",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 2. Основи консультування",
+  "date": "2026-10-15",
+  "file": "mil-2.html",
+  "points": 7,
+  "minutes": 18
+ },
+ {
+  "id": "mil-3",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 3. Вибір методів психологічної роботи",
+  "date": "2026-10-22",
+  "file": "mil-3.html",
+  "points": 12,
+  "minutes": 36
+ },
+ {
+  "id": "mil-4",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 4. Кризова психологічна допомога та диференційна оцінка",
+  "date": "2026-10-27",
+  "file": "mil-4.html",
+  "points": 17,
+  "minutes": 42
+ },
+ {
+  "id": "meth-qa",
+  "subject": "meth",
+  "kind": "qa",
+  "title": "80 питань до іспиту з відповідями",
+  "count": 80,
+  "file": "meth-qa.json"
+ }
+]

@@ -56,7 +56,7 @@ main { max-width: 760px; margin: 0 auto; padding: 4px 16px; outline: none; }
 
 .tabs {
   position: fixed; inset: auto 0 0 0; z-index: 10;
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   height: calc(var(--tabs-h) + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   background: color-mix(in srgb, var(--card) 92%, transparent); backdrop-filter: blur(12px); border-top: 0; box-shadow: 0 -4px 20px rgba(177,140,242,.12); border-radius: 26px 26px 0 0;
@@ -171,3 +171,55 @@ dialog::backdrop { background: rgba(10, 10, 20, .45); }
 .cheer { text-align: center; padding: 22px 16px; color: var(--muted); }
 .cheer svg { width: 84px; height: 84px; display: block; margin: 0 auto 6px; }
 @media (prefers-reduced-motion: reduce) { .wiggle, .pop { animation: none; } }
+
+/* план на сьогодні */
+.plan .step { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; }
+.plan .step + .step { border-top: 1px dashed var(--line); }
+.plan .step.done .t { text-decoration: line-through; color: var(--muted); }
+.plan .step .t { font-weight: 600; }
+.plan .step .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.plan .step .s .dot { display: inline-block; margin-right: 4px; vertical-align: 1px; }
+.plan .step .s .linkish { display: block; margin-top: 2px; }
+.plan .step .min { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.linkish { background: none; border: 0; color: var(--accent); font-weight: 700; padding: 0; cursor: pointer; font-size: 13px; }
+.steps-list .step { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px dashed var(--line); }
+.steps-list .step.done span.t { text-decoration: line-through; color: var(--muted); }
+.mini { height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 6px; }
+.mini span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
+/* вчити */
+.lesson { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; cursor: pointer; }
+.lesson .ico { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; background: color-mix(in srgb, var(--c) 30%, var(--card)); }
+.lesson .t { font-weight: 700; line-height: 1.3; }
+.lesson.read .ico::after { content: "✓"; position: absolute; }
+.lesson .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.reader { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; line-height: 1.6; overflow-wrap: anywhere; }
+.reader h2 { font-size: 19px; margin: 22px 0 8px; }
+.reader h3 { font-size: 16px; margin: 18px 0 6px; }
+.reader ul, .reader ol { padding-left: 22px; }
+.reader li { margin: 3px 0; }
+.reader blockquote { margin: 10px 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 12px 12px 0; }
+.reader table { border-collapse: collapse; width: 100%; font-size: 14px; display: block; overflow-x: auto; }
+.reader td, .reader th { border: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+.reader hr { border: 0; border-top: 1px dashed var(--line); margin: 20px 0; }
+.callout { border-radius: 16px; padding: 12px 14px; margin: 12px 0; position: relative; }
+.callout > .ci { float: left; font-size: 18px; margin: 0 8px 0 0; line-height: 1.5; }
+.callout > p:first-of-type { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+.callout.gray { background: color-mix(in srgb, var(--muted) 12%, transparent); }
+.callout.red { background: color-mix(in srgb, #ff8fa3 18%, transparent); }
+.callout.blue { background: color-mix(in srgb, #8ec5ff 22%, transparent); }
+.callout.green { background: color-mix(in srgb, #8fdcc0 22%, transparent); }
+.callout.purple { background: color-mix(in srgb, #c3a6ff 22%, transparent); }
+.callout.yellow { background: color-mix(in srgb, #ffcc8a 25%, transparent); }
+.backbar { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; }
+.backbar button { border: 0; background: var(--card); box-shadow: var(--shadow); border-radius: 12px; padding: 8px 14px; cursor: pointer; font-weight: 700; }
+.flash { min-height: 260px; display: flex; flex-direction: column; }
+.flash .q { font-size: 19px; font-weight: 800; line-height: 1.35; }
+.flash .lec { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.flash .a { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; line-height: 1.55; overflow-wrap: anywhere; }
+.flash .a ul, .flash .a ol { padding-left: 20px; }
+.flash-actions { display: flex; gap: 8px; margin-top: 12px; }
+.flash-actions .btn { flex: 1; }
+.btn.soft { background: color-mix(in srgb, var(--warn) 30%, var(--card)); color: var(--text); }
+.btn.good { background: color-mix(in srgb, var(--ok) 45%, var(--card)); color: var(--text); }
