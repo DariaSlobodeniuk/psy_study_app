@@ -1,0 +1,709 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//psy_study_app//UK
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Навчання
+X-WR-TIMEZONE:Europe/Kyiv
+BEGIN:VEVENT
+UID:ev-20261013-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261013T103000
+DTEND;TZID=Europe/Kyiv:20261013T123000
+SUMMARY:Військова психологія: Вступна зуст
+ річ. Роль військового психолога в сучас
+ ній війні
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Вступна зу
+ стріч. Роль військового психолога в суч
+ асній війні
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261015-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261015T103000
+DTEND;TZID=Europe/Kyiv:20261015T123000
+SUMMARY:Військова психологія: Основи психо
+ логічного консультування у військовому
+  середовищі
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Основи пси
+ хологічного консультування у військово
+ му середовищі
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261019-1340-cog@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261019T134000
+DTEND;TZID=Europe/Kyiv:20261019T164000
+SUMMARY:Когнітивні (Лекція)
+DESCRIPTION:Когнітивні процеси і методи їх до
+ слідження. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Когнітивні (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261019-1700-meth@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261019T170000
+DTEND;TZID=Europe/Kyiv:20261019T200000
+SUMMARY:Методологія (Лекція)
+DESCRIPTION:Основи методології психології. А
+ удиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Методологія (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261020-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261020T103000
+DTEND;TZID=Europe/Kyiv:20261020T123000
+SUMMARY:Військова психологія: Практикум: ко
+ нсультаційний тренажер
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Практикум: 
+ консультаційний тренажер
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261020-1340-meth@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261020T134000
+DTEND;TZID=Europe/Kyiv:20261020T164000
+SUMMARY:Методологія (Лекція)
+DESCRIPTION:Основи методології психології. А
+ удиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Методологія (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261020-1700-corr@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261020T170000
+DTEND;TZID=Europe/Kyiv:20261020T200000
+SUMMARY:Психокорекція (Лекція)
+DESCRIPTION:Методи психокорекції та психотер
+ апії. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Психокорекція (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261021-1340-teach@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261021T134000
+DTEND;TZID=Europe/Kyiv:20261021T164000
+SUMMARY:Методика викладання (Лекція)
+DESCRIPTION:Методика викладання психології. 
+ Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Методика викладання (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261021-1700-corr@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261021T170000
+DTEND;TZID=Europe/Kyiv:20261021T200000
+SUMMARY:Психокорекція (Лекція)
+DESCRIPTION:Методи психокорекції та психотер
+ апії. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Психокорекція (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261022-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261022T103000
+DTEND;TZID=Europe/Kyiv:20261022T123000
+SUMMARY:Військова психологія: Вибір методі
+ в психологічної роботи
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Вибір мето
+ дів психологічної роботи
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261022-1340-gend@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261022T134000
+DTEND;TZID=Europe/Kyiv:20261022T164000
+SUMMARY:Гендерна (Лекція)
+DESCRIPTION:Гендерна психологія. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Гендерна (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261022-1700-meth@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261022T170000
+DTEND;TZID=Europe/Kyiv:20261022T200000
+SUMMARY:Методологія (Семінар)
+DESCRIPTION:Основи методології психології. А
+ удиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Методологія (Семінар)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261023-1340-cog@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261023T134000
+DTEND;TZID=Europe/Kyiv:20261023T150000
+SUMMARY:Когнітивні (Семінар)
+DESCRIPTION:Когнітивні процеси і методи їх до
+ слідження. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Когнітивні (Семінар)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261023-1700-meth@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261023T170000
+DTEND;TZID=Europe/Kyiv:20261023T182000
+SUMMARY:Методологія (Семінар)
+DESCRIPTION:Основи методології психології. А
+ удиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Методологія (Семінар)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261024-1010-gend@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261024T101000
+DTEND;TZID=Europe/Kyiv:20261024T132000
+SUMMARY:Гендерна (Лекція)
+DESCRIPTION:Гендерна психологія. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Гендерна (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261025-1010-gend@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261025T101000
+DTEND;TZID=Europe/Kyiv:20261025T113000
+SUMMARY:Гендерна (Лекція)
+DESCRIPTION:Гендерна психологія. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Гендерна (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261025-1200-gend@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261025T120000
+DTEND;TZID=Europe/Kyiv:20261025T132000
+SUMMARY:Гендерна (Практика)
+DESCRIPTION:Гендерна психологія. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Гендерна (Практика)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261026-1520-cris@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261026T152000
+DTEND;TZID=Europe/Kyiv:20261026T164000
+SUMMARY:Кризова (Лекція)
+DESCRIPTION:Кризова психологія. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Кризова (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261027-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261027T103000
+DTEND;TZID=Europe/Kyiv:20261027T123000
+SUMMARY:Військова психологія: Кризова псих
+ ологічна допомога та диференційна оцін
+ ка
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Кризова пс
+ ихологічна допомога та диференційна оц
+ інка
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261027-1340-gend@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261027T134000
+DTEND;TZID=Europe/Kyiv:20261027T150000
+SUMMARY:Гендерна (Практика)
+DESCRIPTION:Гендерна психологія. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Гендерна (Практика)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261027-1520-corr@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261027T152000
+DTEND;TZID=Europe/Kyiv:20261027T164000
+SUMMARY:Психокорекція (Лекція)
+DESCRIPTION:Методи психокорекції та психотер
+ апії. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Психокорекція (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261027-1700-corr@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261027T170000
+DTEND;TZID=Europe/Kyiv:20261027T200000
+SUMMARY:Психокорекція (Практика)
+DESCRIPTION:Методи психокорекції та психотер
+ апії. Аудиторно
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Психокорекція (Практика)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261028-1340-cris@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261028T134000
+DTEND;TZID=Europe/Kyiv:20261028T150000
+SUMMARY:Кризова (Лекція)
+DESCRIPTION:Кризова психологія. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Кризова (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261028-1520-cris@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261028T152000
+DTEND;TZID=Europe/Kyiv:20261028T160000
+SUMMARY:Кризова (Лекція)
+DESCRIPTION:Кризова психологія. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Кризова (Лекція)
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261029-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261029T103000
+DTEND;TZID=Europe/Kyiv:20261029T123000
+SUMMARY:Військова психологія: Дебрифінг та 
+ післяподієві втручання
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Дебрифінг 
+ та післяподієві втручання
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261103-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261103T103000
+DTEND;TZID=Europe/Kyiv:20261103T123000
+SUMMARY:Військова психологія: Суїцидальна 
+ поведінка та кризові ризики
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Суїцидальн
+ а поведінка та кризові ризики
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261105-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261105T103000
+DTEND;TZID=Europe/Kyiv:20261105T123000
+SUMMARY:Військова психологія: Гіперзбуджен
+ ня\, гіпозбудження та дисоціативні реак
+ ції\, робота з агресією
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Гіперзбудж
+ ення\, гіпозбудження та дисоціативні ре
+ акції\, робота з агресією
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261110-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261110T103000
+DTEND;TZID=Europe/Kyiv:20261110T123000
+SUMMARY:Військова психологія: Саморегуляці
+ я та робота з ресурсами
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Саморегуля
+ ція та робота з ресурсами
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261117-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261117T103000
+DTEND;TZID=Europe/Kyiv:20261117T123000
+SUMMARY:Військова психологія: Посттравмати
+ чні реакції та ПТСР
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Посттравма
+ тичні реакції та ПТСР
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261119-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261119T103000
+DTEND;TZID=Europe/Kyiv:20261119T123000
+SUMMARY:Військова психологія: Горе і втрата
+  в умовах війни
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Горе і втра
+ та в умовах війни
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261124-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261124T103000
+DTEND;TZID=Europe/Kyiv:20261124T123000
+SUMMARY:Військова психологія: Порушення сн
+ у та кошмари
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Порушення 
+ сну та кошмари
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261126-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261126T103000
+DTEND;TZID=Europe/Kyiv:20261126T123000
+SUMMARY:Військова психологія: Адиктивна по
+ ведінка\, частина 1
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Адиктивна 
+ поведінка\, частина 1
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261201-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261201T103000
+DTEND;TZID=Europe/Kyiv:20261201T123000
+SUMMARY:Військова психологія: Адиктивна по
+ ведінка\, частина 2
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Адиктивна 
+ поведінка\, частина 2
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261203-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261203T103000
+DTEND;TZID=Europe/Kyiv:20261203T123000
+SUMMARY:Військова психологія: Когнітивно-п
+ оведінкові методи консультування
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Когнітивно
+ -поведінкові методи консультування
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261208-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261208T103000
+DTEND;TZID=Europe/Kyiv:20261208T123000
+SUMMARY:Військова психологія: EMDR та травмоф
+ окусовані когнітивно-поведінкові підхо
+ ди
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: EMDR та травм
+ офокусовані когнітивно-поведінкові під
+ ходи
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261210-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261210T103000
+DTEND;TZID=Europe/Kyiv:20261210T123000
+SUMMARY:Військова психологія: Тілесноорієн
+ товані підходи у роботі з травматичним 
+ досвідом
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Тілесноорі
+ єнтовані підходи у роботі з травматични
+ м досвідом
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261215-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261215T103000
+DTEND;TZID=Europe/Kyiv:20261215T123000
+SUMMARY:Військова психологія: Реабілітація
+  через творчість і мистецтво
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Реабілітац
+ ія через творчість і мистецтво
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261217-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261217T103000
+DTEND;TZID=Europe/Kyiv:20261217T123000
+SUMMARY:Військова психологія: Сучасні техн
+ ологічні підходи в реабілітації
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Сучасні те
+ хнологічні підходи в реабілітації
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261222-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261222T103000
+DTEND;TZID=Europe/Kyiv:20261222T123000
+SUMMARY:Військова психологія: Метафоричні 
+ асоціативні карти та проєктивні методи
+ ки
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Метафоричн
+ і асоціативні карти та проєктивні метод
+ ики
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261224-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261224T103000
+DTEND;TZID=Europe/Kyiv:20261224T123000
+SUMMARY:Військова психологія: Сім'я і сімей
+ на динаміка в умовах війни\, частина 1
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Сім'я і сім
+ ейна динаміка в умовах війни\, частина 1
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261229-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261229T103000
+DTEND;TZID=Europe/Kyiv:20261229T123000
+SUMMARY:Військова психологія: Сім'я і сімей
+ на динаміка в умовах війни\, частина 2
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Сім'я і сім
+ ейна динаміка в умовах війни\, частина 2
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20261231-1030-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;TZID=Europe/Kyiv:20261231T103000
+DTEND;TZID=Europe/Kyiv:20261231T123000
+SUMMARY:Військова психологія: Секс\, інтимн
+ ість та близькість після бойового досві
+ ду
+DESCRIPTION:Військовий психолог: професійна 
+ практика в умовах війни. Zoom
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Військова психологія: Секс\, інти
+ мність та близькість після бойового дос
+ віду
+TRIGGER:-PT15M
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:task-t1@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;VALUE=DATE:20261210
+DTEND;VALUE=DATE:20261211
+SUMMARY:Дедлайн: Когнітивні\, Письмові завд
+ ання №1–3
+DESCRIPTION:Теми в Мудлі (стор. 9–12)\, там само 
+ приклад роботи №1. Усі три надіслати вик
+ ладачці на пошту одним листом.
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Дедлайн: Когнітивні\, Письмові за
+ вдання №1–3
+TRIGGER:-P2DT15H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Дедлайн: Когнітивні\, Письмові за
+ вдання №1–3
+TRIGGER:-PT15H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:task-t21@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:Дедлайн: Військова психологія\, Тес
+ тування за ступенем 1
+DESCRIPTION:Після тестування перехід на ступ
+ інь 2 (з 17 листопада). Точну дату тесту ут
+ очнити.
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Дедлайн: Військова психологія\, Т
+ естування за ступенем 1
+TRIGGER:-P2DT15H
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Дедлайн: Військова психологія\, Т
+ естування за ступенем 1
+TRIGGER:-PT15H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ms-2026-11-10-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:Кінець ступеня 1 курсу УКУ
+END:VEVENT
+BEGIN:VEVENT
+UID:ms-2026-11-17-mil@psy_study_app
+DTSTAMP:20261104T093738Z
+DTSTART;VALUE=DATE:20261117
+DTEND;VALUE=DATE:20261118
+SUMMARY:Початок ступеня 2 курсу УКУ
+END:VEVENT
+END:VCALENDAR
