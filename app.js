@@ -48,6 +48,7 @@ const state = {
   plans: store.get('plans', {}),
   budget: store.get('budget', 60),
   learnFilter: store.get('learnFilter', 'all'),
+  program: store.get('program', 'all'),
   reading: null,
   deck: null,
 };
@@ -95,14 +96,23 @@ function derivedStatus(t) {
 }
 const allTasks = () => [...DATA.tasks, ...state.custom].map(t => ({ ...t, st: derivedStatus(t) }));
 const lesson = id => LEARN.find(l => l.id === id);
+// Що показувати: обидві програми або лише одну (Каразін чи УКУ)
+const inProg = id => state.program === 'all' || subj(id).program === state.program;
+const V = {
+  subjects: () => DATA.subjects.filter(s => inProg(s.id)),
+  events: () => DATA.events.filter(e => inProg(e.subject)),
+  tasks: () => allTasks().filter(t => inProg(t.subject)),
+  milestones: () => (DATA.milestones || []).filter(m => inProg(m.subject)),
+  learn: () => LEARN.filter(l => inProg(l.subject)),
+};
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function eventsOn(dateStr) {
-  return DATA.events.filter(e => e.date === dateStr).sort((a, b) => a.start.localeCompare(b.start));
+  return V.events().filter(e => e.date === dateStr).sort((a, b) => a.start.localeCompare(b.start));
 }
 function nextEvent() {
   const now = new Date();
-  return DATA.events
+  return V.events()
     .map(e => ({ e, s: at(e.date, e.start), f: at(e.date, e.end) }))
     .filter(x => x.f > now)
     .sort((a, b) => a.s - b.s)[0];
@@ -156,10 +166,10 @@ function renderToday() {
   const now = new Date();
   const ev = eventsOn(iso(t));
   const nx = nextEvent();
-  const tasks = allTasks().filter(x => x.st !== 2);
+  const tasks = V.tasks().filter(x => x.st !== 2);
   const dated = tasks.filter(x => x.deadline && daysUntil(x.deadline) <= 14).sort((a, b) => a.deadline.localeCompare(b.deadline));
   const inProgress = tasks.filter(x => x.st === 1 && !dated.includes(x));
-  const ms = (DATA.milestones || []).filter(m => daysUntil(m.date) >= 0 && daysUntil(m.date) <= 21);
+  const ms = V.milestones().filter(m => daysUntil(m.date) >= 0 && daysUntil(m.date) <= 21);
   const h = now.getHours();
   const hi = h < 12 ? 'Доброго ранку' : h < 18 ? 'Гарного дня' : 'Добрий вечір';
 
@@ -210,8 +220,8 @@ function renderSchedule() {
   for (let i = 0; i < 7; i++) {
     const d = addDays(mon, i), ds = iso(d);
     const ev = eventsOn(ds);
-    const dl = allTasks().filter(t => t.deadline === ds && t.st !== 2);
-    const ms = (DATA.milestones || []).filter(m => m.date === ds);
+    const dl = V.tasks().filter(t => t.deadline === ds && t.st !== 2);
+    const ms = V.milestones().filter(m => m.date === ds);
     if (!ev.length && !dl.length && !ms.length) continue;
     any = true;
     html += `<div class="day-head ${ds === iso(today()) ? 'today' : ''}"><b>${DAYS[d.getDay()]}, ${fmtDay(d)}</b><span class="small muted">${ev.length ? ev.length + ' зан.' : ''}</span></div><div class="stack">`;
@@ -226,9 +236,9 @@ function renderSchedule() {
 }
 
 function renderTasks() {
-  const list = allTasks();
-  const used = DATA.subjects.filter(s => list.some(t => t.subject === s.id));
-  let html = `<div class="filters">
+  const list = V.tasks();
+  const used = V.subjects().filter(s => list.some(t => t.subject === s.id));
+  let html = used.length < 2 ? '' : `<div class="filters">
     <button data-filter="all" class="${state.filter === 'all' ? 'on' : ''}">Усі</button>
     ${used.map(s => `<button data-filter="${s.id}" class="${state.filter === s.id ? 'on' : ''}">${esc(s.short)}</button>`).join('')}
   </div>`;
@@ -252,16 +262,16 @@ function renderTasks() {
 }
 
 function renderProgress() {
-  const list = allTasks();
+  const list = V.tasks();
   const total = list.length, done = list.filter(t => t.st === 2).length, prog = list.filter(t => t.st === 1).length;
   let html = `<div class="stats">
     <div class="card stat"><b>${done}</b><span>готово</span></div>
     <div class="card stat"><b>${prog}</b><span>в процесі</span></div>
     <div class="card stat"><b>${total - done - prog}</b><span>не почато</span></div></div>`;
 
-  const lect = LEARN.filter(l => l.kind !== 'qa');
-  const qa = LEARN.filter(l => l.kind === 'qa');
-  const stepsAll = allTasks().flatMap(t => t.steps || []);
+  const lect = V.learn().filter(l => l.kind !== 'qa');
+  const qa = V.learn().filter(l => l.kind === 'qa');
+  const stepsAll = V.tasks().flatMap(t => t.steps || []);
   html += `<div class="stats" style="margin-top:8px">
     <div class="card stat"><b>${stepsAll.filter(s => state.steps[s.id]).length}</b><span>кроків з ${stepsAll.length}</span></div>
     <div class="card stat"><b>${lect.filter(l => state.read[l.id]).length}</b><span>конспектів з ${lect.length}</span></div>
@@ -269,7 +279,7 @@ function renderProgress() {
 
   // прогрес по предметах
   html += `<div class="section-title">Завдання по предметах</div><div class="card">`;
-  for (const s of DATA.subjects) {
+  for (const s of V.subjects()) {
     const ts = list.filter(t => t.subject === s.id);
     if (!ts.length) continue;
     const d = ts.filter(t => t.st === 2).length, p = ts.filter(t => t.st === 1).length;
@@ -286,7 +296,7 @@ function renderProgress() {
     const a = addDays(start, w * 7), b = addDays(a, 7);
     const per = {};
     let sum = 0;
-    for (const e of DATA.events) {
+    for (const e of V.events()) {
       const d = parseDate(e.date);
       if (d >= a && d < b) {
         const hrs = (at(e.date, e.end) - at(e.date, e.start)) / 36e5;
@@ -301,11 +311,11 @@ function renderProgress() {
       <small>${w.sum ? Math.round(w.sum) : ''}</small>
       <div class="stackbar" style="height:${w.sum / max * 100}%">${Object.entries(w.per).map(([k, v]) => `<span style="height:${v / w.sum * 100}%;background:${subj(k).color}"></span>`).join('')}</div>
       <small>${w.a.getDate()}.${pad(w.a.getMonth() + 1)}</small></div>`).join('') +
-    `</div><div class="legend">${DATA.subjects.filter(s => DATA.events.some(e => e.subject === s.id)).map(s => `<span><i style="background:${s.color}"></i>${esc(s.short)}</span>`).join('')}</div>
+    `</div><div class="legend">${V.subjects().filter(s => V.events().some(e => e.subject === s.id)).map(s => `<span><i style="background:${s.color}"></i>${esc(s.short)}</span>`).join('')}</div>
     <p class="small muted" style="margin:10px 0 0">Тиждень, у якому ти зараз, виділено. Сесія Каразіна в розкладі поки лише одна, бо дат наступної ще немає.</p></div>`;
 
   // курс УКУ
-  const mil = DATA.events.filter(e => e.subject === 'mil');
+  const mil = state.program === 'knu' ? [] : DATA.events.filter(e => e.subject === 'mil');
   const now = new Date();
   for (const st of [1, 2]) {
     const ls = mil.filter(e => e.stage === st);
@@ -355,7 +365,7 @@ function addSheet() {
   openSheet(`<h2>Нове завдання</h2>
     <form id="add-form">
       <label for="f-title">Що зробити</label><input id="f-title" required placeholder="Наприклад, прочитати статтю">
-      <label for="f-subj">Предмет</label><select id="f-subj">${DATA.subjects.map(s => `<option value="${s.id}" ${state.filter === s.id ? 'selected' : ''}>${esc(s.short)}</option>`).join('')}</select>
+      <label for="f-subj">Предмет</label><select id="f-subj">${V.subjects().map(s => `<option value="${s.id}" ${state.filter === s.id ? 'selected' : ''}>${esc(s.short)}</option>`).join('')}</select>
       <label for="f-date">Дедлайн (можна залишити порожнім)</label><input id="f-date" type="date">
       <label for="f-notes">Нотатки</label><textarea id="f-notes"></textarea>
       <div class="actions"><button type="button" class="btn ghost" data-close>Скасувати</button><button class="btn">Додати</button></div>
@@ -468,9 +478,9 @@ function allSteps() {
 // по одному кроку з завдання, поки не набереться твій час на день.
 function buildPlan() {
   const stepsById = Object.fromEntries(allSteps().map(s => [s.id, s]));
-  const key = iso(today());
+  const key = iso(today()) + ':' + state.program;
   if (state.plans[key]) return state.plans[key].map(id => stepsById[id] || findStep(id)).filter(Boolean);
-  const tasks = allTasks().filter(t => t.st !== 2 && t.steps && t.steps.some(s => !state.steps[s.id]));
+  const tasks = V.tasks().filter(t => t.st !== 2 && t.steps && t.steps.some(s => !state.steps[s.id]));
   const score = t => {
     let v = t.deadline ? Math.max(0, daysUntil(t.deadline)) : 200;
     if (t.priority === 'Високий') v -= 20;
@@ -488,7 +498,8 @@ function buildPlan() {
       plan.push({ ...s, task: t }); used += s.min; usedSubj[t.subject] = 1;
     }
   }
-  state.plans = { [key]: plan.map(p => p.id) }; store.set('plans', state.plans);
+  for (const k of Object.keys(state.plans)) if (!k.startsWith(iso(today()))) delete state.plans[k];
+  state.plans[key] = plan.map(p => p.id); store.set('plans', state.plans);
   return plan;
 }
 function findStep(id) {
@@ -522,7 +533,7 @@ function budgetSheet() {
     <div class="actions"><button class="btn" data-close>Готово</button></div>`);
   sheet.querySelectorAll('[data-b]').forEach(b => b.onclick = () => {
     state.budget = +b.dataset.b; store.set('budget', state.budget);
-    delete state.plans[iso(today())]; store.set('plans', state.plans);
+    delete state.plans[iso(today()) + ':' + state.program]; store.set('plans', state.plans);
     budgetSheet(); render();
   });
 }
@@ -553,8 +564,8 @@ async function renderLearn() {
       <p style="margin-top:16px"><button class="btn block ${state.read[l.id] ? 'ghost' : ''}" data-mark-read="${l.id}">${state.read[l.id] ? 'Прочитано ✓ (натисни, щоб зняти)' : 'Я прочитала 📖'}</button></p>`;
   }
   if (state.deck) return renderDeck();
-  const subjects = DATA.subjects.filter(s => LEARN.some(l => l.subject === s.id));
-  let html = `<div class="filters">
+  const subjects = V.subjects().filter(s => LEARN.some(l => l.subject === s.id));
+  let html = subjects.length < 2 ? '' : `<div class="filters">
     <button data-lfilter="all" class="${state.learnFilter === 'all' ? 'on' : ''}">Усі</button>
     ${subjects.map(s => `<button data-lfilter="${s.id}" class="${state.learnFilter === s.id ? 'on' : ''}">${esc(s.short)}</button>`).join('')}</div>`;
   for (const s of subjects) {
@@ -576,7 +587,7 @@ async function renderLearn() {
     }).join('');
     html += `</div>`;
   }
-  const missing = DATA.subjects.filter(s => !LEARN.some(l => l.subject === s.id)).map(s => s.short);
+  const missing = V.subjects().filter(s => !LEARN.some(l => l.subject === s.id)).map(s => s.short);
   if (missing.length) html += `<p class="small muted" style="margin:16px 4px">Конспектів ще немає: ${missing.map(esc).join(', ')}. Скинь записи лекцій, і я додам.</p>`;
   return html;
 }
@@ -626,6 +637,7 @@ function afterRender() {
 const TITLES = { today: 'Сьогодні', schedule: 'Розклад', tasks: 'Завдання', learn: 'Вчити', progress: 'Прогрес' };
 function render() {
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
+  document.querySelectorAll('#progbar button').forEach(b => b.classList.toggle('on', b.dataset.prog === state.program));
   $('#screen-title').innerHTML = (state.tab === 'today' ? mascot('happy', 'wiggle') : '') + TITLES[state.tab];
   const fn = { today: renderToday, schedule: renderSchedule, tasks: renderTasks, learn: renderLearn, progress: renderProgress }[state.tab];
   const out = fn();
@@ -653,8 +665,15 @@ view.addEventListener('click', e => {
   if (e.target.closest('[data-mark-read]')) { const id = e.target.closest('[data-mark-read]').dataset.markRead; state.read[id] = !state.read[id]; store.set('read', state.read); if (state.read[id]) toast('Прочитано 📖'); return render(); }
   if (e.target.closest('[data-reveal]')) { state.deck.shown = true; return render(); }
   const ans = e.target.closest('[data-answer]'); if (ans) return answerCard(ans.dataset.answer === 'yes');
-  if (e.target.closest('[data-replan]')) { delete state.plans[iso(today())]; store.set('plans', state.plans); return render(); }
+  if (e.target.closest('[data-replan]')) { delete state.plans[iso(today()) + ':' + state.program]; store.set('plans', state.plans); return render(); }
   if (e.target.closest('[data-budget]')) return budgetSheet();
+});
+$('#progbar').addEventListener('click', e => {
+  const b = e.target.closest('[data-prog]'); if (!b) return;
+  state.program = b.dataset.prog; store.set('program', state.program);
+  state.filter = 'all'; state.learnFilter = 'all'; store.set('filter', 'all'); store.set('learnFilter', 'all');
+  state.reading = null; state.deck = null;
+  render(); window.scrollTo({ top: 0 });
 });
 $('#settings-btn').onclick = () => DATA && settingsSheet();
 

@@ -223,3 +223,7 @@ dialog::backdrop { background: rgba(10, 10, 20, .45); }
 .flash-actions .btn { flex: 1; }
 .btn.soft { background: color-mix(in srgb, var(--warn) 30%, var(--card)); color: var(--text); }
 .btn.good { background: color-mix(in srgb, var(--ok) 45%, var(--card)); color: var(--text); }
+
+.progbar { display: flex; gap: 6px; max-width: 760px; margin: 0 auto 6px; padding: 0 16px; }
+.progbar button { flex: 1; border: 0; background: var(--card); box-shadow: var(--shadow); border-radius: 16px; padding: 9px 6px; font-weight: 700; font-size: 14px; color: var(--muted); cursor: pointer; }
+.progbar button.on { background: linear-gradient(135deg, #d9c4ff, #ffc4dc); color: #4a2d63; }
