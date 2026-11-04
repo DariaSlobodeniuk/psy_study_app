@@ -120,6 +120,16 @@
   "minutes": 42
  },
  {
+  "id": "mil-5",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 5. Дебрифінг та післяподієві втручання",
+  "date": "2026-10-29",
+  "file": "mil-5.html",
+  "points": 7,
+  "minutes": 19
+ },
+ {
   "id": "meth-qa",
   "subject": "meth",
   "kind": "qa",
