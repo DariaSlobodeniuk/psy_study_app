@@ -48,7 +48,7 @@ a { color: var(--accent); }
   backdrop-filter: blur(10px);
 }
 .top h1 { font-size: 28px; margin: 0; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-.top h1 .mascot { width: 40px; height: 40px; }
+.top h1 .mascot { width: 50px; height: 50px; margin: -6px 0; }
 .icon-btn { background: none; border: 0; padding: 8px; border-radius: 10px; color: var(--muted); cursor: pointer; }
 .icon-btn:hover { background: var(--accent-soft); }
 
@@ -169,7 +169,7 @@ dialog::backdrop { background: rgba(10, 10, 20, .45); }
 .pop { animation: pop .35s ease; }
 @keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
 .cheer { text-align: center; padding: 22px 16px; color: var(--muted); }
-.cheer svg { width: 84px; height: 84px; display: block; margin: 0 auto 6px; }
+.cheer .mascot { width: 110px; height: 110px; display: block; margin: 0 auto 6px; }
 @media (prefers-reduced-motion: reduce) { .wiggle, .pop { animation: none; } }
 
 /* план на сьогодні */
@@ -261,3 +261,21 @@ dialog::backdrop { background: rgba(10, 10, 20, .45); }
 .lp-q.good { background: color-mix(in srgb, var(--ok) 35%, var(--card)); color: var(--text); }
 .lp-q.mid { background: color-mix(in srgb, var(--warn) 35%, var(--card)); color: var(--text); }
 .lp-q.low { background: color-mix(in srgb, #f08aa8 25%, var(--card)); color: var(--text); }
+
+/* котик River: дихає, гойдається і реагує на настрій */
+.cat { display: block; object-fit: contain; user-select: none; -webkit-user-drag: none; transform-origin: 50% 92%; animation: cat-breathe 3.6s ease-in-out infinite; }
+@keyframes cat-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.025, .975); } }
+.cat-love, .cat-proud { animation: cat-sway 4.2s ease-in-out infinite; }
+@keyframes cat-sway { 0%, 100% { transform: rotate(0) scale(1); } 25% { transform: rotate(-3deg) scale(1.02, .98); } 75% { transform: rotate(3deg) scale(1.02, .98); } }
+.cat-question { animation: cat-tilt 3s ease-in-out infinite; }
+@keyframes cat-tilt { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-7deg); } 85% { transform: rotate(-5deg); } }
+.cat-excited { animation: cat-hop .9s ease-in-out infinite; }
+@keyframes cat-hop { 0%, 100% { transform: translateY(0) scale(1.03, .97); } 45% { transform: translateY(-9%) scale(.98, 1.03); } }
+.cat-sleepy { animation: cat-sleep 5s ease-in-out infinite; }
+@keyframes cat-sleep { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.04, .95); } }
+.cat-sad { animation: cat-sad 4s ease-in-out infinite; }
+@keyframes cat-sad { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(2%) rotate(-2deg); } }
+.quiz { position: relative; }
+.quiz-cat { position: absolute; right: 10px; top: -34px; width: 70px; height: 70px; }
+.quiz .lec { padding-right: 70px; }
+@media (prefers-reduced-motion: reduce) { .cat { animation: none; } }

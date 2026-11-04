@@ -11,21 +11,11 @@ const MONTHS = ['січня', 'лютого', 'березня', 'квітня', 
 const STATUS = ['Не почато', 'В процесі', 'Готово'];
 
 // ---------- маскот ----------
+// Котика намалювала River: шість настроїв у icons/cat/*.webp
+const CAT = { happy: 'love', love: 'love', question: 'question', sleepy: 'sleepy', excited: 'excited', sad: 'sad', proud: 'proud' };
 function mascot(mood = 'happy', cls = '') {
-  const eyes = mood === 'sleepy'
-    ? '<path d="M32 54 q5 4 10 0M58 54 q5 4 10 0" stroke="#4a3f5c" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
-    : '<circle cx="37" cy="54" r="4.5" fill="#4a3f5c"/><circle cx="63" cy="54" r="4.5" fill="#4a3f5c"/><circle cx="38.5" cy="52.5" r="1.6" fill="#fff"/><circle cx="64.5" cy="52.5" r="1.6" fill="#fff"/>';
-  const mouth = '<path d="M44 63 q3 3 6 0 q3 3 6 0" stroke="#7a5a8c" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
-  return `<svg class="mascot ${cls}" viewBox="0 0 100 100" aria-hidden="true">
-    <path d="M22 40 L20 12 L42 28 Z M78 40 L80 12 L58 28 Z" fill="#fff" stroke="#e3d3f5" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M25 33 L24 19 L36 28 Z M75 33 L76 19 L64 28 Z" fill="#ffcfe3"/>
-    <ellipse cx="50" cy="58" rx="36" ry="32" fill="#fff" stroke="#e3d3f5" stroke-width="2.5"/>
-    <path d="M44 27 q3 -7 6 0 q3 -8 6 0" fill="#fff" stroke="#e3d3f5" stroke-width="2.5" stroke-linejoin="round"/>
-    ${eyes}
-    <ellipse cx="29" cy="64" rx="6" ry="3.5" fill="#ffc2da"/><ellipse cx="71" cy="64" rx="6" ry="3.5" fill="#ffc2da"/>
-    <path d="M48 59 h4 l-2 2.5z" fill="#f59ab9"/>
-    ${mouth}
-  </svg>`;
+  const m = CAT[mood] || 'love';
+  return `<img class="mascot cat cat-${m} ${cls}" src="icons/cat/${m}.webp" alt="" aria-hidden="true" draggable="false">`;
 }
 
 // ---------- збережений стан ----------
@@ -161,7 +151,7 @@ function taskHTML(t) {
 }
 
 function cheer(text, mood = 'happy') {
-  return `<div class="cheer">${mascot(mood, 'wiggle')}<div>${text}</div></div>`;
+  return `<div class="cheer">${mascot(mood)}<div>${text}</div></div>`;
 }
 
 // ---------- екрани ----------
@@ -254,7 +244,7 @@ function renderTasks() {
 
   if (dated.length) html += `<div class="section-title">З дедлайном</div><div class="stack">${dated.map(taskHTML).join('')}</div>`;
   if (undated.length) html += `<div class="section-title">До сесії, дата ще невідома</div><div class="stack">${undated.map(taskHTML).join('')}</div>`;
-  if (!open.length) html += cheer('Усе зроблено! Ти молодець 💜');
+  if (!open.length) html += cheer('Усе зроблено! Ти молодець 💜', 'excited');
   if (done.length) {
     html += `<div class="section-title" style="display:flex;justify-content:space-between;align-items:center">Зроблено (${done.length})
       <button class="icon-btn small" data-toggle-done>${state.showDone ? 'сховати' : 'показати'}</button></div>`;
@@ -677,7 +667,7 @@ async function renderDeck() {
   const known = cardsKnown(l.id);
   let html = `<div class="backbar"><button data-back>‹ Назад</button><span class="small muted">запам'ятала ${known} з ${cards.length}</span></div>
     <div class="mini" style="margin:0 4px 14px"><span style="width:${known / cards.length * 100}%"></span></div>`;
-  if (state.deck.cur === -1) return html + cheer('Усі картки запам\'ятала! Ти неймовірна 💜') +
+  if (state.deck.cur === -1) return html + cheer('Усі картки запам\'ятала! Ти неймовірна 💜', 'excited') +
     `<p style="text-align:center"><button class="btn ghost" data-reset-deck>Почати спочатку</button></p>`;
   const c = cards[state.deck.cur];
   html += `<div class="card flash">
@@ -742,7 +732,7 @@ function renderTests() {
   if (state.quiz) return renderQuiz();
   const ls = quizLessons();
   if (!ls.length) return cheer('Тестів поки немає. Щойно з\'являться конспекти, я складу до них питання.', 'sleepy');
-  let html = `<div class="card hero quiz-hero">${mascot('happy')}<div><div class="t">Змішаний тест</div>
+  let html = `<div class="card hero quiz-hero">${mascot('question')}<div><div class="t">Змішаний тест</div>
     <div class="small">10 випадкових питань з усіх лекцій${state.program === 'all' ? '' : ' цієї програми'}</div>
     <button class="btn" data-start-quiz="mix" style="margin-top:10px">Почати ✏️</button></div></div>`;
   for (const s of V.subjects()) {
@@ -767,8 +757,8 @@ function renderQuiz() {
     <div class="mini" style="margin:0 4px 14px"><span style="width:${z.pos / n * 100}%"></span></div>`;
   if (z.pos === n) {
     const pct = Math.round(z.score / n * 100);
-    const msg = pct >= 90 ? 'Майже все правильно! Ти чудово знаєш цю тему 💜' : pct >= 70 ? 'Дуже добре! Лишилось трохи підтягнути.' : pct >= 40 ? 'Непогано для початку. Перечитай конспект і спробуй ще раз.' : 'Тема ще свіжа, це нормально. Почитай конспект, а потім повернись сюди.';
-    html += `<div class="card quiz-result"><div class="big">${z.score} з ${n}</div><div class="muted">${title ? esc(title) : ''}</div></div>` + cheer(msg, pct >= 40 ? 'happy' : 'sleepy');
+    const msg = pct >= 90 ? 'Майже все правильно! Ти чудово знаєш цю тему 💜' : pct >= 70 ? 'Дуже добре! Лишилось трохи підтягнути.' : pct >= 50 ? 'Непогано для початку. Перечитай конспект і спробуй ще раз.' : 'Тема ще свіжа, це нормально. Почитай конспект, а потім повернись сюди.';
+    html += `<div class="card quiz-result"><div class="big">${z.score} з ${n}</div><div class="muted">${title ? esc(title) : ''}</div></div>` + cheer(msg, pct >= 90 ? 'excited' : pct >= 70 ? 'proud' : pct >= 50 ? 'love' : 'sad');
     html += `<div class="stack" style="margin-top:12px">
       ${z.wrong.length ? `<button class="btn block" data-quiz-wrong>Повторити помилки (${z.wrong.length})</button>` : ''}
       <button class="btn block ghost" data-start-quiz="${z.id}">Пройти ще раз</button>
@@ -776,7 +766,8 @@ function renderQuiz() {
     return html;
   }
   const it = z.items[z.pos], q = QUIZ[it.lid][it.qi];
-  html += `<div class="card quiz">
+  const qm = z.picked === null ? 'question' : it.perm[z.picked] === QUIZ[it.lid][it.qi].a ? 'excited' : 'sad';
+  html += `<div class="card quiz">${mascot(qm, 'quiz-cat')}
     <div class="lec">${esc(z.id === 'mix' ? lesson(it.lid)?.title : title)}</div>
     <div class="q">${esc(q.q)}</div>
     <div class="opts">${it.perm.map((oi, k) => {
@@ -802,7 +793,7 @@ function setProfile(p) {
   applyProfile(); render();
 }
 function profileSheet() {
-  openSheet(`<div style="text-align:center">${mascot('happy', 'wiggle onb')}</div>
+  openSheet(`<div style="text-align:center">${mascot('love', 'onb')}</div>
     <h2 style="text-align:center">Привіт! Що ти вчиш?</h2>
     <p class="small muted" style="text-align:center;margin-top:0">Додаток покаже тільки твої предмети. Змінити можна будь-коли в налаштуваннях.</p>
     <div class="stack"><button class="btn block" data-profile="knu">🎓 Магістратура Каразіна</button>
@@ -815,7 +806,7 @@ const TITLES = { today: 'Сьогодні', schedule: 'Розклад', tasks: '
 function render() {
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
   document.querySelectorAll('#progbar button').forEach(b => b.classList.toggle('on', b.dataset.prog === state.program));
-  $('#screen-title').innerHTML = (state.tab === 'today' ? mascot('happy', 'wiggle') : '') + TITLES[state.tab];
+  $('#screen-title').innerHTML = (state.tab === 'today' ? mascot('proud') : '') + TITLES[state.tab];
   const fn = { today: renderToday, schedule: renderSchedule, tasks: renderTasks, learn: renderLearn, tests: renderTests, progress: renderProgress }[state.tab];
   const out = fn();
   if (out instanceof Promise) out.then(h => { view.innerHTML = h; afterRender(); }); else { view.innerHTML = out; afterRender(); }
@@ -867,7 +858,7 @@ async function init() {
     try { LEARN = await (await fetch('data/learn/index.json', { cache: 'no-cache' })).json(); } catch { LEARN = []; }
     try { QUIZ = await (await fetch('data/learn/quiz.json', { cache: 'no-cache' })).json(); } catch { QUIZ = {}; }
   } catch {
-    view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sleepy');
+    view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sad');
     return;
   }
   // ?p=knu — посилання на версію лише з Каразіним, ?p=all — обидві програми
