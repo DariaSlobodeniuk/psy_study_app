@@ -41,6 +41,9 @@ const state = {
   program: store.get('program', 'all'),
   profile: store.get('profile', null), // 'knu' — лише Каразін, 'all' — Каразін і УКУ
   quizRes: store.get('quizRes', {}),
+  scaleRes: store.get('scaleRes', {}),
+  testMode: store.get('testMode', 'quiz'), // 'quiz' — питання до лекцій, 'scales' — скринінгові шкали
+  scale: null,
   reading: null,
   deck: null,
   quiz: null,
@@ -48,6 +51,7 @@ const state = {
 let DATA = null;
 let LEARN = [];
 let QUIZ = {};
+let SCALES = [];
 const cache = {};
 
 // ---------- дати ----------
@@ -728,11 +732,14 @@ function nextQuestion() {
   }
   render(); window.scrollTo({ top: 0 });
 }
+const testSeg = () => SCALES.length ? `<div class="seg"><button class="${state.testMode === 'quiz' ? 'on' : ''}" data-tmode="quiz">✏️ Знання</button><button class="${state.testMode === 'scales' ? 'on' : ''}" data-tmode="scales">📋 Шкали</button></div>` : '';
 function renderTests() {
   if (state.quiz) return renderQuiz();
+  if (state.scale) return renderScale();
+  if (state.testMode === 'scales' && SCALES.length) return testSeg() + renderScaleList();
   const ls = quizLessons();
-  if (!ls.length) return cheer('Тестів поки немає. Щойно з\'являться конспекти, я складу до них питання.', 'sleepy');
-  let html = `<div class="card hero quiz-hero">${mascot('question')}<div><div class="t">Змішаний тест</div>
+  if (!ls.length) return testSeg() + cheer('Тестів поки немає. Щойно з\'являться конспекти, я складу до них питання.', 'sleepy');
+  let html = testSeg() + `<div class="card hero quiz-hero">${mascot('question')}<div><div class="t">Змішаний тест</div>
     <div class="small">10 випадкових питань з усіх лекцій${state.program === 'all' ? '' : ' цієї програми'}</div>
     <button class="btn" data-start-quiz="mix" style="margin-top:10px">Почати ✏️</button></div></div>`;
   for (const s of V.subjects()) {
@@ -781,6 +788,116 @@ function renderQuiz() {
   return html;
 }
 
+// ---------- скринінгові шкали ----------
+const scaleById = id => SCALES.find(x => x.id === id);
+const scaleOpts = (sc, it) => it.o || sc.options;
+const fmtDate = d => d.split('-').reverse().slice(0, 2).join('.');
+function scoreScale(sc, ans) {
+  const val = i => { const a = ans[i]; return a == null || Array.isArray(a) ? 0 : scaleOpts(sc, sc.items[i])[a].v; };
+  let total = 0;
+  sc.items.forEach((it, i) => { if (!it.noscore) total += val(i); });
+  const subs = (sc.subscales || []).map(s => {
+    const vs = s.items.map(n => val(n - 1));
+    const max = s.items.reduce((m, n) => m + Math.max(...scaleOpts(sc, sc.items[n - 1]).map(o => o.v)), 0);
+    const sym = vs.filter(v => v >= 2).length;
+    return { name: s.name, sum: vs.reduce((a, b) => a + b, 0), max, sym, need: s.need, ok: s.need ? sym >= s.need : null };
+  });
+  const band = (sc.bands || []).find(b => total <= b.to) || null;
+  return { total, subs, band };
+}
+function startScale(id) {
+  state.scale = { id, pos: 0, ans: [] };
+  state.tab = 'tests'; store.set('tab', 'tests'); state.quiz = null;
+  render(); window.scrollTo({ top: 0 });
+}
+function scaleStep(dir) {
+  const z = state.scale, sc = scaleById(z.id);
+  z.pos = Math.max(0, z.pos + dir);
+  if (z.pos === sc.items.length) {
+    const r = scoreScale(sc, z.ans);
+    const hist = state.scaleRes[z.id] || [];
+    hist.unshift({ at: iso(today()), total: r.total, band: r.band?.label || '' });
+    state.scaleRes[z.id] = hist.slice(0, 10);
+    store.set('scaleRes', state.scaleRes);
+  }
+  render(); window.scrollTo({ top: 0 });
+}
+function pickScale(k) {
+  const z = state.scale, sc = scaleById(z.id), it = sc.items[z.pos];
+  if (it.multi) {
+    const a = new Set(z.ans[z.pos] || []); a.has(k) ? a.delete(k) : a.add(k);
+    z.ans[z.pos] = [...a]; return render();
+  }
+  z.ans[z.pos] = k;
+  render();
+  setTimeout(() => { if (state.scale === z && z.ans[z.pos] === k) scaleStep(1); }, 220);
+}
+function renderScaleList() {
+  let html = `<div class="card hero quiz-hero">${mascot('question')}<div><div class="t">Скринінгові шкали</div>
+    <div class="small">Опитувальники з матеріалів курсу. Можна пройти за себе або за уявного клієнта, щоб потренуватися. Застосунок сам порахує бали.</div></div></div><div class="stack">`;
+  html += SCALES.map(sc => {
+    const last = (state.scaleRes[sc.id] || [])[0];
+    return `<div class="card lesson" style="--c:var(--accent)" data-start-scale="${sc.id}"><div class="ico">📋</div>
+      <div><div class="t">${esc(sc.name)}</div><div class="meta">${esc(sc.full)}</div>
+      <div class="meta">${sc.items.length} пунктів · ${esc(sc.period)}${last ? ` · востаннє ${last.total} балів (${fmtDate(last.at)})` : ''}</div></div></div>`;
+  }).join('') + `</div>`;
+  html += `<p class="small muted" style="margin:16px 4px">Скринінг не ставить діагноз, він лише показує, на що звернути увагу. Відповіді зберігаються тільки на цьому телефоні.
+    HADS і шкалу Спілбергера–Ханіна сюди не додано: на них є авторські права, а сайт відкритий для всіх, тож їх краще проходити з паперового бланка.</p>`;
+  if (Object.keys(state.scaleRes).length) html += `<p style="margin:0 4px 16px"><button class="btn ghost small-btn" data-scale-clear>Стерти історію шкал</button></p>`;
+  return html;
+}
+function renderScale() {
+  const z = state.scale, sc = scaleById(z.id), n = sc.items.length;
+  let html = `<div class="backbar"><button data-scale-exit>‹ До шкал</button><span class="small muted">${sc.name} · ${Math.min(z.pos + 1, n)} з ${n}</span></div>
+    <div class="mini" style="margin:0 4px 14px"><span style="width:${z.pos / n * 100}%"></span></div>`;
+  if (z.pos === n) return html + scaleResult(sc, z);
+  const it = sc.items[z.pos], opts = scaleOpts(sc, it), a = z.ans[z.pos];
+  html += `<div class="card quiz">${mascot('question', 'quiz-cat')}
+    ${z.pos === 0 ? `<div class="instr">${esc(sc.instr)}</div>` : `<div class="lec">${esc(sc.period)}</div>`}
+    <div class="q"><span class="qn">${z.pos + 1}.</span> ${esc(it.t)}</div>
+    <div class="opts">${opts.map((o, k) => {
+      const on = it.multi ? (a || []).includes(k) : a === k;
+      return `<button class="opt ${on ? 'sel' : ''}" data-spick="${k}">${it.multi ? (on ? '☑ ' : '☐ ') : ''}${esc(o.t)}${!it.multi && !it.noscore && !it.o ? `<span class="pts">${o.v}</span>` : ''}</button>`;
+    }).join('')}</div></div>
+    <div class="flash-actions">${z.pos ? `<button class="btn ghost" data-sstep="-1">‹ Назад</button>` : ''}
+    ${it.multi || a != null ? `<button class="btn block" data-sstep="1">${z.pos + 1 === n ? 'Результат' : 'Далі'}</button>` : ''}</div>`;
+  return html;
+}
+function scaleResult(sc, z) {
+  const r = scoreScale(sc, z.ans);
+  let html = `<div class="card quiz-result"><div class="muted">${esc(sc.name)} · ${esc(sc.full)}</div><div class="big">${r.total}</div><div class="muted">з ${sc.max} балів</div>
+    ${r.band ? `<div class="band tone-${r.band.tone}">${esc(r.band.label)}</div><p>${esc(r.band.text)}</p>` : ''}</div>`;
+  if (sc.safety && (z.ans[sc.safety.item - 1] ?? 0) >= sc.safety.min) html += `<div class="card safety">
+    <b>Пункт ${sc.safety.item} відмічено більше нуля.</b> У роботі з клієнтом це завжди привід окремо розпитати про суїцидальний ризик, незалежно від загальної суми.
+    Якщо ти відповідала за себе, будь ласка, не лишайся з цим сама: <a href="tel:7333">Lifeline Ukraine 7333</a> (цілодобово й безкоштовно), а якщо є безпосередня небезпека, <a href="tel:112">112</a>.</div>`;
+  if (r.subs.length) html += `<div class="section-title">Субшкали</div><div class="card stack">` + r.subs.map(s => `<div>
+      <div style="display:flex;justify-content:space-between;gap:8px"><span>${esc(s.name)}</span><b>${s.sum} / ${s.max}</b></div>
+      <div class="mini"><span style="width:${s.sum / s.max * 100}%"></span></div>
+      ${s.need ? `<div class="small muted">симптомів (2+ бали): ${s.sym}, потрібно ${s.need} ${s.ok ? '✓' : '✗'}</div>` : ''}</div>`).join('') + `</div>`;
+  if (sc.clusterRule) {
+    const all = r.subs.every(s => s.ok);
+    html += `<div class="card small"><b>${all ? 'Критерії кластерів DSM-5 виконано.' : 'Критерії кластерів DSM-5 не виконано.'}</b> ${esc(sc.clusterRule)}</div>`;
+  }
+  if (sc.levels) {
+    const marked = sc.items.map((it, i) => it.noscore ? [].concat(z.ans[i] ?? []).map(k => it.multi ? it.o[k].t : `${it.t} ${it.o[k].t}`) : []).flat();
+    html += `<div class="section-title">Як читати суму</div><div class="card stack small">${sc.levels.map(l => `<div><b>${esc(l.label)}.</b> ${esc(l.text)}</div>`).join('')}
+      <div class="muted">Чим вища сума, тим інтенсивнішим був бойовий досвід. Точних меж між рівнями в матеріалах курсу немає.</div></div>`;
+    if (marked.length) html += `<div class="card small"><b>Також відмічено:</b><ul>${marked.map(m => `<li>${esc(m)}</li>`).join('')}</ul></div>`;
+  }
+  html += `<details class="card small"><summary>Мої відповіді</summary><ol>${sc.items.map((it, i) => {
+    const a = z.ans[i], o = scaleOpts(sc, it);
+    const t = a == null ? '—' : Array.isArray(a) ? (a.length ? a.map(k => o[k].t).join('; ') : 'нічого') : `${o[a].t}${it.noscore ? '' : ` (${o[a].v})`}`;
+    return `<li>${esc(it.t)}<br><b>${esc(t)}</b></li>`;
+  }).join('')}</ol></details>`;
+  const hist = (state.scaleRes[sc.id] || []).slice(1, 6);
+  if (hist.length) html += `<div class="card small"><b>Попередні результати:</b> ${hist.map(h => `${h.total} (${fmtDate(h.at)})`).join(', ')}</div>`;
+  html += `<div class="card small muted">${esc(sc.about)} ${esc(sc.src)} Скринінг не ставить діагноз.</div>`;
+  html += cheer('Дякую, що пройшла. Пам\'ятай, що це лише орієнтир 💜', 'love');
+  html += `<div class="stack" style="margin-top:12px"><button class="btn block ghost" data-start-scale="${sc.id}">Пройти ще раз</button>
+    <button class="btn block ghost" data-scale-exit>До шкал</button></div>`;
+  return html;
+}
+
 // ---------- профіль ----------
 function applyProfile() {
   if (state.profile === 'knu') { state.program = 'knu'; store.set('program', 'knu'); }
@@ -789,7 +906,7 @@ function applyProfile() {
 function setProfile(p) {
   state.profile = p; store.set('profile', p);
   if (p === 'all') { state.program = 'all'; store.set('program', 'all'); }
-  state.filter = 'all'; state.learnFilter = 'all'; state.reading = null; state.deck = null; state.quiz = null;
+  state.filter = 'all'; state.learnFilter = 'all'; state.reading = null; state.deck = null; state.quiz = null; state.scale = null;
   applyProfile(); render();
 }
 function profileSheet() {
@@ -815,7 +932,7 @@ function render() {
 document.querySelector('.tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
   state.tab = b.dataset.tab; store.set('tab', state.tab); if (state.tab === 'schedule') state.week = 0;
-  state.reading = null; state.deck = null; state.quiz = null;
+  state.reading = null; state.deck = null; state.quiz = null; state.scale = null;
   render(); window.scrollTo({ top: 0 });
 });
 view.addEventListener('click', e => {
@@ -827,6 +944,12 @@ view.addEventListener('click', e => {
   if (e.target.closest('[data-toggle-done]')) { state.showDone = !state.showDone; store.set('showDone', state.showDone); return render(); }
   if (e.target.closest('[data-add]')) return addSheet();
   const st = e.target.closest('[data-step]'); if (st) { toggleStep(st.dataset.step); return render(); }
+  const tm = e.target.closest('[data-tmode]'); if (tm) { state.testMode = tm.dataset.tmode; store.set('testMode', state.testMode); return render(); }
+  const ss = e.target.closest('[data-start-scale]'); if (ss) return startScale(ss.dataset.startScale);
+  const sp = e.target.closest('[data-spick]'); if (sp) return pickScale(+sp.dataset.spick);
+  const sst = e.target.closest('[data-sstep]'); if (sst) return scaleStep(+sst.dataset.sstep);
+  if (e.target.closest('[data-scale-exit]')) { state.scale = null; state.testMode = 'scales'; store.set('testMode', 'scales'); render(); return window.scrollTo({ top: 0 }); }
+  if (e.target.closest('[data-scale-clear]')) { if (confirm('Стерти всі збережені результати шкал?')) { state.scaleRes = {}; store.set('scaleRes', {}); render(); } return; }
   const sq = e.target.closest('[data-start-quiz]'); if (sq) return startQuiz(sq.dataset.startQuiz);
   const pk = e.target.closest('[data-pick]'); if (pk) return pickAnswer(+pk.dataset.pick);
   if (e.target.closest('[data-quiz-next]')) return nextQuestion();
@@ -857,6 +980,7 @@ async function init() {
     DATA = await r.json();
     try { LEARN = await (await fetch('data/learn/index.json', { cache: 'no-cache' })).json(); } catch { LEARN = []; }
     try { QUIZ = await (await fetch('data/learn/quiz.json', { cache: 'no-cache' })).json(); } catch { QUIZ = {}; }
+    try { SCALES = await (await fetch('data/learn/scales.json', { cache: 'no-cache' })).json(); } catch { SCALES = []; }
   } catch {
     view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sad');
     return;
