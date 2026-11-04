@@ -1,5 +1,5 @@
 // Кешує додаток, щоб він відкривався без інтернету. Дані завжди пробує взяти свіжі.
-const CACHE = 'study-v1';
+const CACHE = 'study-v2';
 const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'data/data.json'];
 
 self.addEventListener('install', e => {

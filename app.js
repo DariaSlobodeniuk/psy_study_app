@@ -12,21 +12,18 @@ const STATUS = ['Не почато', 'В процесі', 'Готово'];
 
 // ---------- маскот ----------
 function mascot(mood = 'happy', cls = '') {
-  const mouth = mood === 'sleepy'
-    ? '<path d="M44 62 q6 4 12 0" stroke="#7a5a8c" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
-    : '<path d="M43 60 q7 7 14 0" stroke="#7a5a8c" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
   const eyes = mood === 'sleepy'
-    ? '<path d="M34 50 q4 3 8 0M58 50 q4 3 8 0" stroke="#4a3f5c" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
-    : '<circle cx="38" cy="50" r="4.5" fill="#4a3f5c"/><circle cx="62" cy="50" r="4.5" fill="#4a3f5c"/><circle cx="39.5" cy="48.5" r="1.5" fill="#fff"/><circle cx="63.5" cy="48.5" r="1.5" fill="#fff"/>';
+    ? '<path d="M32 54 q5 4 10 0M58 54 q5 4 10 0" stroke="#4a3f5c" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+    : '<circle cx="37" cy="54" r="4.5" fill="#4a3f5c"/><circle cx="63" cy="54" r="4.5" fill="#4a3f5c"/><circle cx="38.5" cy="52.5" r="1.6" fill="#fff"/><circle cx="64.5" cy="52.5" r="1.6" fill="#fff"/>';
+  const mouth = '<path d="M44 63 q3 3 6 0 q3 3 6 0" stroke="#7a5a8c" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
   return `<svg class="mascot ${cls}" viewBox="0 0 100 100" aria-hidden="true">
-    <g fill="#fff" stroke="#e6d6f7" stroke-width="2">
-      <circle cx="30" cy="40" r="16"/><circle cx="50" cy="30" r="18"/><circle cx="70" cy="40" r="16"/>
-      <circle cx="24" cy="60" r="15"/><circle cx="76" cy="60" r="15"/><circle cx="50" cy="70" r="20"/>
-    </g>
-    <ellipse cx="50" cy="55" rx="27" ry="22" fill="#fff"/>
-    <path d="M26 26 l4 -12 l8 9z M74 26 l-4 -12 l-8 9z" fill="#ffd3e6" stroke="#e6d6f7" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M22 40 L20 12 L42 28 Z M78 40 L80 12 L58 28 Z" fill="#fff" stroke="#e3d3f5" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M25 33 L24 19 L36 28 Z M75 33 L76 19 L64 28 Z" fill="#ffcfe3"/>
+    <ellipse cx="50" cy="58" rx="36" ry="32" fill="#fff" stroke="#e3d3f5" stroke-width="2.5"/>
+    <path d="M44 27 q3 -7 6 0 q3 -8 6 0" fill="#fff" stroke="#e3d3f5" stroke-width="2.5" stroke-linejoin="round"/>
     ${eyes}
-    <ellipse cx="31" cy="60" rx="5" ry="3" fill="#ffc2da"/><ellipse cx="69" cy="60" rx="5" ry="3" fill="#ffc2da"/>
+    <ellipse cx="29" cy="64" rx="6" ry="3.5" fill="#ffc2da"/><ellipse cx="71" cy="64" rx="6" ry="3.5" fill="#ffc2da"/>
+    <path d="M48 59 h4 l-2 2.5z" fill="#f59ab9"/>
     ${mouth}
   </svg>`;
 }
