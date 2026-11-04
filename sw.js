@@ -1,6 +1,11 @@
 // Кешує додаток, щоб він відкривався без інтернету. Дані завжди пробує взяти свіжі.
-const CACHE = 'study-v11';
+<<<<<<< HEAD
+const CACHE = 'study-v12';
 const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icons/cat/rig/angL.webp', 'icons/cat/rig/angR.webp', 'icons/cat/rig/arcL.webp', 'icons/cat/rig/arcR.webp', 'icons/cat/rig/bang.webp', 'icons/cat/rig/blushL.webp', 'icons/cat/rig/blushR.webp', 'icons/cat/rig/body.webp', 'icons/cat/rig/earL.webp', 'icons/cat/rig/earR.webp', 'icons/cat/rig/eyeL.webp', 'icons/cat/rig/eyeR.webp', 'icons/cat/rig/gt.webp', 'icons/cat/rig/head_cut.webp', 'icons/cat/rig/heart.webp', 'icons/cat/rig/lt.webp', 'icons/cat/rig/mouthO.webp', 'icons/cat/rig/mouthOpen.webp', 'icons/cat/rig/mouthTiny.webp', 'icons/cat/rig/mouthW.webp', 'icons/cat/rig/qmark.webp', 'icons/cat/rig/scribble.webp', 'icons/cat/rig/spark.webp', 'icons/cat/rig/spark2.webp', 'icons/cat/rig/tail.webp', 'icons/cat/rig/upL.webp', 'icons/cat/rig/upR.webp', 'icons/cat/rig/zzz.webp', 'icons/icon-192.png', 'icons/icon-512.png', 'data/data.json', 'data/learn/index.json', 'data/learn/quiz.json'];
+=======
+const CACHE = 'study-v12';
+const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icons/cat/love.webp', 'icons/cat/question.webp', 'icons/cat/sleepy.webp', 'icons/cat/excited.webp', 'icons/cat/sad.webp', 'icons/cat/proud.webp', 'icons/icon-192.png', 'icons/icon-512.png', 'data/data.json', 'data/learn/index.json', 'data/learn/quiz.json'];
+>>>>>>> parent of 120946a (Котик зібраний з деталей River: рухаються хвостик, вушка й голова, шість настроїв)
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS.map(a => new Request(a, { cache: 'reload' })))).then(() => self.skipWaiting()));

@@ -262,41 +262,20 @@ dialog::backdrop { background: rgba(10, 10, 20, .45); }
 .lp-q.mid { background: color-mix(in srgb, var(--warn) 35%, var(--card)); color: var(--text); }
 .lp-q.low { background: color-mix(in srgb, #f08aa8 25%, var(--card)); color: var(--text); }
 
-/* котик River, зібраний з деталей */
-.kit { position: relative; display: block; aspect-ratio: 1; flex: none; }
-.kit .kp { position: absolute; }
-.kit .kp img { width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; pointer-events: none; }
-.kit .k-headgrp { position: absolute; inset: 0; transform-origin: 50% 56%; animation: k-head 4.5s ease-in-out infinite; }
-.kit .k-earL { transform: rotate(-22deg); } .kit .k-earR { transform: rotate(22deg); }
-.kit .k-earL img, .kit .k-earR img { transform-origin: 50% 92%; animation: k-ear 5s ease-in-out infinite; }
-.kit .k-earR img { animation-delay: -2.3s; }
-.kit .k-tail { transform: rotate(15deg); }
-.kit .k-tail img { transform-origin: 18% 88%; animation: k-tail 1.8s ease-in-out infinite; }
-.kit .k-eye img { transform-origin: 50% 55%; animation: k-blink 4.8s infinite; }
-.kit .k-deco img { animation: k-float 2.6s ease-in-out infinite; }
-.kit .k-heart2 img, .kit .k-spark2 img { animation-delay: -1.3s; }
-@keyframes k-head { 0%, 100% { transform: rotate(0) translateY(0); } 50% { transform: rotate(2deg) translateY(.6%); } }
-@keyframes k-ear { 0%, 84%, 100% { transform: rotate(0); } 88% { transform: rotate(-14deg); } 92% { transform: rotate(6deg); } 96% { transform: rotate(-4deg); } }
-@keyframes k-tail { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(14deg); } }
-@keyframes k-blink { 0%, 93%, 100% { transform: scaleY(1); } 95.5% { transform: scaleY(.1); } }
-@keyframes k-float { 0%, 100% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-14%) scale(1.08); opacity: .8; } }
-/* настрої */
-.kit-question .k-headgrp { animation: k-tilt 3.2s ease-in-out infinite; }
-@keyframes k-tilt { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(-3deg); } }
-.kit-excited { animation: k-hop .8s ease-in-out infinite; transform-origin: 50% 100%; }
-.kit-excited .k-tail img { animation-duration: .5s; }
-@keyframes k-hop { 0%, 100% { transform: translateY(0) scale(1.03, .97); } 45% { transform: translateY(-8%) scale(.98, 1.03); } }
-.kit-sad .k-headgrp { animation: k-sad 4s ease-in-out infinite; }
-.kit-sad .k-earL { transform: rotate(-48deg) translate(-8%, 18%); } .kit-sad .k-earR { transform: rotate(48deg) translate(8%, 18%); }
-.kit-sad .k-tail img { animation-duration: 4s; }
-@keyframes k-sad { 0%, 100% { transform: translateY(3%) rotate(-2deg); } 50% { transform: translateY(4%) rotate(1deg); } }
-.kit-sleepy { animation: k-breathe 4.5s ease-in-out infinite; transform-origin: 50% 100%; }
-.kit-sleepy .k-headgrp { animation: k-doze 4.5s ease-in-out infinite; }
-.kit-sleepy .k-tail img { animation-duration: 5s; }
-.kit-sleepy .k-earL img, .kit-sleepy .k-earR img { animation-duration: 9s; }
-@keyframes k-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, .97); } }
-@keyframes k-doze { 0%, 100% { transform: translateY(2%) rotate(3deg); } 50% { transform: translateY(3.5%) rotate(4deg); } }
+/* котик River: дихає, гойдається і реагує на настрій */
+.cat { display: block; object-fit: contain; user-select: none; -webkit-user-drag: none; transform-origin: 50% 92%; animation: cat-breathe 3.6s ease-in-out infinite; }
+@keyframes cat-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.025, .975); } }
+.cat-love, .cat-proud { animation: cat-sway 4.2s ease-in-out infinite; }
+@keyframes cat-sway { 0%, 100% { transform: rotate(0) scale(1); } 25% { transform: rotate(-3deg) scale(1.02, .98); } 75% { transform: rotate(3deg) scale(1.02, .98); } }
+.cat-question { animation: cat-tilt 3s ease-in-out infinite; }
+@keyframes cat-tilt { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-7deg); } 85% { transform: rotate(-5deg); } }
+.cat-excited { animation: cat-hop .9s ease-in-out infinite; }
+@keyframes cat-hop { 0%, 100% { transform: translateY(0) scale(1.03, .97); } 45% { transform: translateY(-9%) scale(.98, 1.03); } }
+.cat-sleepy { animation: cat-sleep 5s ease-in-out infinite; }
+@keyframes cat-sleep { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.04, .95); } }
+.cat-sad { animation: cat-sad 4s ease-in-out infinite; }
+@keyframes cat-sad { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(2%) rotate(-2deg); } }
 .quiz { position: relative; }
-.quiz-cat { position: absolute; right: 10px; top: -36px; width: 72px; }
+.quiz-cat { position: absolute; right: 10px; top: -34px; width: 70px; height: 70px; }
 .quiz .lec { padding-right: 70px; }
-@media (prefers-reduced-motion: reduce) { .kit, .kit * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .cat { animation: none; } }
