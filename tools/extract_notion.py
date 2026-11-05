@@ -25,6 +25,7 @@ for f in [g for S in SESS for g in glob.glob(S+'/tool-results/mcp-Notion-notion-
     raw=open(f).read()
     try: o=json.loads(raw)
     except Exception: o=json.loads(json.loads(raw)[0]['text'])
+    if isinstance(o,list): o=json.loads(o[0]['text'])
     add(o)
 
 LECT=[  # id, subject, notion id, kind, date

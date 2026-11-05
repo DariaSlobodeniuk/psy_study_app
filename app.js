@@ -884,7 +884,7 @@ function scaleResult(sc, z) {
     ${r.band ? `<div class="band tone-${r.band.tone}">${esc(r.band.label)}</div><p>${esc(r.band.text)}</p>` : ''}</div>`;
   if (sc.safety && (z.ans[sc.safety.item - 1] ?? 0) >= sc.safety.min) html += `<div class="card safety">
     <b>Пункт ${sc.safety.item} відмічено більше нуля.</b> У роботі з клієнтом це завжди привід окремо розпитати про суїцидальний ризик, незалежно від загальної суми.
-    Якщо ти відповідала за себе, будь ласка, не лишайся з цим сама: <a href="tel:7333">Lifeline Ukraine 7333</a> (цілодобово й безкоштовно), а якщо є безпосередня небезпека, <a href="tel:112">112</a>.</div>`;
+    Якщо ти відповідала за себе, будь ласка, не лишайся з цим сама: розкажи людині, якій довіряєш, або психотерапевту. Якщо є безпосередня небезпека, дзвони <a href="tel:112">112</a>. Лінія 7333 зараз не працює, а інші кризові лінії є в конспекті лекції 6, розділ 6.8 (перед дзвінком перевір номер на сайті служби).</div>`;
   if (r.subs.length) html += `<div class="section-title">Субшкали</div><div class="card stack">` + r.subs.map(s => `<div>
       <div style="display:flex;justify-content:space-between;gap:8px"><span>${esc(s.name)}</span><b>${s.sum} / ${s.max}</b></div>
       <div class="mini"><span style="width:${s.sum / s.max * 100}%"></span></div>
