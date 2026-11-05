@@ -198,6 +198,8 @@ function renderToday() {
 
   html += `<div class="section-title">Дедлайни на два тижні</div>`;
   html += dated.length ? `<div class="stack">${dated.map(taskHTML).join('')}</div>` : `<div class="card empty">Найближчими днями нічого здавати не треба ✨</div>`;
+  const doneSoon = V.tasks().filter(x => x.st === 2 && x.deadline && daysUntil(x.deadline) >= -3 && daysUntil(x.deadline) <= 14);
+  if (doneSoon.length) html += `<div class="small muted" style="margin:14px 4px 8px">Позначені виконаними. Якщо помилилась, натисни на галочку, і завдання повернеться.</div><div class="stack">${doneSoon.map(taskHTML).join('')}</div>`;
 
   if (inProgress.length) html += `<div class="section-title">Ти зараз робиш</div><div class="stack">${inProgress.map(taskHTML).join('')}</div>`;
 
@@ -478,13 +480,16 @@ function settingsSheet() {
 
 // ---------- дії ----------
 function setStatus(id, st) {
+  const prev = state.status[id] ?? 0;
   state.status[id] = st; store.set('status', state.status);
-  if (st === 2) toast(['Ура! 🎉', 'Готово, так тримати 💜', 'Ще одне зроблено ✨', 'Молодець 🌸'][Math.floor(Math.random() * 4)]);
+  if (st === 2) toast(['Ура! 🎉', 'Готово, так тримати 💜', 'Ще одне зроблено ✨', 'Молодець 🌸'][Math.floor(Math.random() * 4)], () => setStatus(id, prev === 2 ? 0 : prev));
   render();
 }
-function toast(text) {
+function toast(text, undo) {
+  document.querySelectorAll('.toast').forEach(x => x.remove());
   const t = document.createElement('div'); t.className = 'toast pop'; t.textContent = text;
-  document.body.append(t); setTimeout(() => t.remove(), 1800);
+  if (undo) { const b = document.createElement('button'); b.textContent = 'Скасувати'; b.onclick = () => { t.remove(); undo(); }; t.append(b); }
+  document.body.append(t); setTimeout(() => t.remove(), undo ? 5000 : 1800);
 }
 function applyTheme() {
   const t = store.get('theme', 'auto');
