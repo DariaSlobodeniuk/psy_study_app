@@ -9,7 +9,7 @@ def add(o):
     old=pages.get(pid)
     if old and old.get('page_last_edited_at','')>o.get('page_last_edited_at',''): return
     pages[pid]=o
-SESS=[SES,'/root/.claude/projects/-home-user-psy-study-app/2fd69305-d550-5451-9de6-2eb642bf1fcf']
+SESS=[x for x in [SES,'/root/.claude/projects/-home-user-psy-study-app/2fd69305-d550-5451-9de6-2eb642bf1fcf'] if os.path.exists(x+'.jsonl')]
 for SES in SESS:
  for line in open(SES+'.jsonl'):
      o=json.loads(line)
@@ -43,6 +43,7 @@ LECT=[  # id, subject, notion id, kind, date
  ('mil-4','mil','4061407deeae81a3bc55ceadc45c65c0','lecture','2026-10-27'),
  ('mil-5','mil','40e1407deeae81aab5acda0e9dd29a68','lecture','2026-10-29'),
  ('mil-6','mil','40e1407deeae81a48c63db2111a24152','lecture','2026-11-03'),
+ ('mil-7','mil','4141407deeae819db3b2f722d1a0e299','lecture','2026-11-10'),
  ('mil-ref','mil','40e1407deeae811b8d8be7a8f3b52f35','ref',None),
  ('meth-qa','meth','4001407deeae8108a6a4f3129b97735c','qa',None),
 ]
@@ -50,6 +51,7 @@ COLORS={'gray':'gray','red':'red','blue':'blue','green':'green','purple':'purple
 def clean(t):
     t=t[t.index('<content>')+9:t.rindex('</content>')]
     t=re.sub(r'<page url="[^"]*">.*?</page>','',t,flags=re.S)
+    t=re.sub(r'Розшифровка: <code>[^<]*</code>\.\s*','',t)
     t=re.sub(r'(Розшифровка збережена в|Розшифровка:|Тексти збережені в|Текст збережений у) [^\n<]*?\.(txt)?\.?(?=\s|<)','',t)
     t=re.sub(r'<mention url="[^"]*">(.*?)</mention>',r'«\1»',t,flags=re.S)
     NAMES={'4061407deeae81a3bc55ceadc45c65c0':'Лекція 4','40e1407deeae81a48c63db2111a24152':'Лекція 6','40e1407deeae81aab5acda0e9dd29a68':'Лекція 5'}

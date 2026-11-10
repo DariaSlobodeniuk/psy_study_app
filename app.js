@@ -815,8 +815,12 @@ function scoreScale(sc, ans) {
     const vs = s.items.map(n => val(n - 1));
     const max = s.items.reduce((m, n) => m + Math.max(...scaleOpts(sc, sc.items[n - 1]).map(o => o.v)), 0);
     const sym = vs.filter(v => v >= 2).length;
-    return { name: s.name, sum: vs.reduce((a, b) => a + b, 0), max, sym, need: s.need, ok: s.need ? sym >= s.need : null };
+    const sum = vs.reduce((a, b) => a + b, 0);
+    if (sc.mean) { const m = Math.round(sum / vs.length); return { name: s.name, sum: m, max: 100, band: sc.bands.find(b => m <= b.to) }; }
+    return { name: s.name, sum, max, sym, need: s.need, ok: s.need ? sym >= s.need : null };
   });
+  // для шкал із середнім (CBI) головний показник — найвища з підшкал
+  if (sc.mean) total = Math.max(...subs.map(x => x.sum));
   const band = (sc.bands || []).find(b => total <= b.to) || null;
   return { total, subs, band };
 }
@@ -880,7 +884,7 @@ function renderScale() {
 }
 function scaleResult(sc, z) {
   const r = scoreScale(sc, z.ans);
-  let html = `<div class="card quiz-result"><div class="muted">${esc(sc.name)} · ${esc(sc.full)}</div><div class="big">${r.total}</div><div class="muted">з ${sc.max} балів</div>
+  let html = `<div class="card quiz-result"><div class="muted">${esc(sc.name)} · ${esc(sc.full)}</div><div class="big">${r.total}</div><div class="muted">${sc.mean ? 'найвища зі шкал, від 0 до 100' : `з ${sc.max} балів`}</div>
     ${r.band ? `<div class="band tone-${r.band.tone}">${esc(r.band.label)}</div><p>${esc(r.band.text)}</p>` : ''}</div>`;
   if (sc.safety && (z.ans[sc.safety.item - 1] ?? 0) >= sc.safety.min) html += `<div class="card safety">
     <b>Пункт ${sc.safety.item} відмічено більше нуля.</b> У роботі з клієнтом це завжди привід окремо розпитати про суїцидальний ризик, незалежно від загальної суми.
@@ -888,6 +892,7 @@ function scaleResult(sc, z) {
   if (r.subs.length) html += `<div class="section-title">Субшкали</div><div class="card stack">` + r.subs.map(s => `<div>
       <div style="display:flex;justify-content:space-between;gap:8px"><span>${esc(s.name)}</span><b>${s.sum} / ${s.max}</b></div>
       <div class="mini"><span style="width:${s.sum / s.max * 100}%"></span></div>
+      ${s.band ? `<div class="small muted">${esc(s.band.label)}</div>` : ''}
       ${s.need ? `<div class="small muted">симптомів (2+ бали): ${s.sym}, потрібно ${s.need} ${s.ok ? '✓' : '✗'}</div>` : ''}</div>`).join('') + `</div>`;
   if (sc.clusterRule) {
     const all = r.subs.every(s => s.ok);

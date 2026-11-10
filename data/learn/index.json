@@ -140,6 +140,16 @@
   "minutes": 39
  },
  {
+  "id": "mil-7",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 7. Професійна стійкість психолога і профілактика вигорання",
+  "date": "2026-11-10",
+  "file": "mil-7.html",
+  "points": 0,
+  "minutes": 14
+ },
+ {
   "id": "mil-ref",
   "subject": "mil",
   "kind": "ref",
