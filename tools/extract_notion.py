@@ -51,7 +51,7 @@ COLORS={'gray':'gray','red':'red','blue':'blue','green':'green','purple':'purple
 def clean(t):
     t=t[t.index('<content>')+9:t.rindex('</content>')]
     t=re.sub(r'<page url="[^"]*">.*?</page>','',t,flags=re.S)
-    t=re.sub(r',?\s*/mnt/project-files/[^\s)<]*?\.(pdf|txt)','',t)
+    t=re.sub(r',?\s*/mnt/project-files/[^\s)<]*?\.(pdf|txt|pptx|docx)','',t)
     t=re.sub(r'Розшифровка: <code>[^<]*</code>\.\s*','',t)
     t=re.sub(r'(Розшифровка збережена в|Розшифровка:|Тексти збережені в|Текст збережений у) [^\n<]*?\.(txt)?\.?(?=\s|<)','',t)
     t=re.sub(r'<mention url="[^"]*">(.*?)</mention>',r'«\1»',t,flags=re.S)
