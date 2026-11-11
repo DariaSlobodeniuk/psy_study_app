@@ -101,7 +101,7 @@ const V = {
   events: () => DATA.events.filter(e => inProg(e.subject)),
   tasks: () => allTasks().filter(t => inProg(t.subject)),
   milestones: () => (DATA.milestones || []).filter(m => inProg(m.subject)),
-  learn: () => LEARN.filter(l => inProg(l.subject)),
+  learn: () => LEARN.filter(l => l.kind !== 'test' && inProg(l.subject)),
 };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -641,7 +641,7 @@ async function renderLearn() {
     ${subjects.map(s => `<button data-lfilter="${s.id}" class="${state.learnFilter === s.id ? 'on' : ''}">${esc(s.short)}</button>`).join('')}</div>`;
   for (const s of subjects) {
     if (state.learnFilter !== 'all' && state.learnFilter !== s.id) continue;
-    const items = LEARN.filter(l => l.subject === s.id);
+    const items = LEARN.filter(l => l.subject === s.id && l.kind !== 'test');
     const readN = items.filter(l => l.kind !== 'qa' && state.read[l.id]).length;
     const lect = items.filter(l => l.kind !== 'qa').length;
     html += `<div class="section-title" style="display:flex;justify-content:space-between">${esc(s.short)}<span>${lect ? `${readN}/${lect} прочитано` : ''}</span></div><div class="stack">`;
@@ -707,7 +707,7 @@ function afterRender() {
 
 // ---------- тести ----------
 const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const quizLessons = () => V.learn().filter(l => QUIZ[l.id]);
+const quizLessons = () => LEARN.filter(l => inProg(l.subject) && QUIZ[l.id]);
 function startQuiz(id, only) {
   // only — номери питань, які треба повторити (помилки)
   let items;
@@ -783,7 +783,7 @@ function renderQuiz() {
     html += `<div class="stack" style="margin-top:12px">
       ${z.wrong.length ? `<button class="btn block" data-quiz-wrong>Повторити помилки (${z.wrong.length})</button>` : ''}
       ${z.id === 'mix' ? `<button class="btn block ${z.wrong.length ? 'ghost' : ''}" data-start-quiz="mix">Ще 10 нових питань ✨</button>` : `<button class="btn block ghost" data-start-quiz="${z.id}">Пройти ще раз</button>
-      <button class="btn block ghost" data-open-learn="${z.id}">Відкрити конспект 📖</button>`}
+      ${lesson(z.id)?.kind === 'test' ? '' : `<button class="btn block ghost" data-open-learn="${z.id}">Відкрити конспект 📖</button>`}`}
       <button class="btn block ghost" data-quiz-exit>До всіх тестів</button></div>`;
     return html;
   }
@@ -1000,6 +1000,7 @@ async function init() {
     DATA = await r.json();
     try { LEARN = await (await fetch('data/learn/index.json', { cache: 'no-cache' })).json(); } catch { LEARN = []; }
     try { QUIZ = await (await fetch('data/learn/quiz.json', { cache: 'no-cache' })).json(); } catch { QUIZ = {}; }
+    LEARN = LEARN.concat((QUIZ._tests || []).map(t => ({ ...t, kind: 'test' })));
     try { SCALES = await (await fetch('data/learn/scales.json', { cache: 'no-cache' })).json(); } catch { SCALES = []; }
   } catch {
     view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sad');
