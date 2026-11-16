@@ -1006,8 +1006,12 @@ async function init() {
     view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sad');
     return;
   }
+  // ?zoom_<предмет>=<посилання> зберігає Zoom-лінк лише на цьому телефоні, у репозиторії його немає
+  const qs = new URLSearchParams(location.search); let gotLink = false;
+  for (const [k, v] of qs) if (k.startsWith('zoom_') && /^https:\/\/[\w.-]*zoom\.us\//.test(v) && DATA.subjects.some(s => s.id === k.slice(5))) { state.links[k.slice(5)] = v; gotLink = true; }
+  if (gotLink) { store.set('links', state.links); history.replaceState(null, '', location.pathname); setTimeout(() => toast('Посилання на Zoom збережено 🔗'), 600); }
   // ?p=knu — посилання на версію лише з Каразіним, ?p=all — обидві програми
-  const p = new URLSearchParams(location.search).get('p');
+  const p = qs.get('p');
   if (p === 'knu' || p === 'all') { state.profile = p; store.set('profile', p); if (p === 'all') { state.program = 'all'; store.set('program', 'all'); } history.replaceState(null, '', location.pathname); }
   if (state.profile === 'knu' && !['today', 'schedule', 'tasks', 'learn', 'tests', 'progress'].includes(state.tab)) state.tab = 'today';
   applyProfile();
