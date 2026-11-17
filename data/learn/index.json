@@ -150,6 +150,16 @@
   "minutes": 14
  },
  {
+  "id": "mil-8",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 8. Робота з горем та втратою",
+  "date": "2026-11-17",
+  "file": "mil-8.html",
+  "points": 0,
+  "minutes": 17
+ },
+ {
   "id": "mil-ref",
   "subject": "mil",
   "kind": "ref",

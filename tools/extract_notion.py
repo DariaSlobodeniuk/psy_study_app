@@ -44,6 +44,7 @@ LECT=[  # id, subject, notion id, kind, date
  ('mil-5','mil','40e1407deeae81aab5acda0e9dd29a68','lecture','2026-10-29'),
  ('mil-6','mil','40e1407deeae81a48c63db2111a24152','lecture','2026-11-03'),
  ('mil-7','mil','4141407deeae819db3b2f722d1a0e299','lecture','2026-11-10'),
+ ('mil-8','mil','41b1407deeae8194a3f2d00c490fa7a0','lecture','2026-11-17'),
  ('mil-ref','mil','40e1407deeae811b8d8be7a8f3b52f35','ref',None),
  ('meth-qa','meth','4001407deeae8108a6a4f3129b97735c','qa',None),
 ]
