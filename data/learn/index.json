@@ -160,6 +160,16 @@
   "minutes": 17
  },
  {
+  "id": "mil-9",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 9. Посттравматичні реакції та ПТСР",
+  "date": "2026-11-19",
+  "file": "mil-9.html",
+  "points": 0,
+  "minutes": 31
+ },
+ {
   "id": "mil-ref",
   "subject": "mil",
   "kind": "ref",
