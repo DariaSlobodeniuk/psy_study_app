@@ -644,7 +644,9 @@ async function renderLearn() {
     const items = LEARN.filter(l => l.subject === s.id && l.kind !== 'test');
     const readN = items.filter(l => l.kind !== 'qa' && state.read[l.id]).length;
     const lect = items.filter(l => l.kind !== 'qa').length;
-    html += `<div class="section-title" style="display:flex;justify-content:space-between">${esc(s.short)}<span>${lect ? `${readN}/${lect} прочитано` : ''}</span></div><div class="stack">`;
+    html += `<div class="section-title" style="display:flex;justify-content:space-between">${esc(s.short)}<span>${lect ? `${readN}/${lect} прочитано` : ''}</span></div>`;
+    if (s.resources?.length) html += `<div class="res-links">${s.resources.map(r => `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.t)} ↗</a>`).join('')}</div>`;
+    html += `<div class="stack">`;
     html += items.map(l => {
       if (l.kind === 'qa') {
         const known = cardsKnown(l.id);
