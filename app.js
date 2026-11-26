@@ -43,6 +43,7 @@ const state = {
   quizRes: store.get('quizRes', {}),
   scaleRes: store.get('scaleRes', {}),
   testMode: store.get('testMode', 'quiz'), // 'quiz' — питання до лекцій, 'scales' — скринінгові шкали
+  techGroup: store.get('techGroup', 'all'),
   scale: null,
   reading: null,
   deck: null,
@@ -52,6 +53,7 @@ let DATA = null;
 let LEARN = [];
 let QUIZ = {};
 let SCALES = [];
+let TECH = { groups: [], items: [] };
 const cache = {};
 
 // ---------- дати ----------
@@ -618,10 +620,34 @@ async function getFile(file) {
 }
 function openLearn(id) {
   const l = lesson(id); if (!l) return;
+  state.backTab = state.tab === 'tech' ? 'tech' : null;
   state.tab = 'learn'; store.set('tab', 'learn');
   if (l.kind === 'qa') { state.deck = { id, shown: false, cur: null }; state.reading = null; }
   else { state.reading = id; state.deck = null; }
   render(); window.scrollTo({ top: 0 });
+}
+// ---------- техніки ----------
+// data/learn/techniques.json: groups [{id,name,icon}], items [{id,group,title,goal,steps[],when,note,subject,src,learn}]
+function renderTech() {
+  const items = TECH.items.filter(t => inProg(t.subject));
+  if (!items.length) return cheer('Технік поки немає. Щойно лектори дадуть вправи, вони з\'являться тут.', 'question');
+  const groups = TECH.groups.filter(g => items.some(t => t.group === g.id));
+  const cur = groups.some(g => g.id === state.techGroup) ? state.techGroup : 'all';
+  let html = `<p class="small muted" style="margin:0 4px 8px">Вправи з лекцій, згруповані за метою. Натисни на техніку, щоб побачити кроки.</p>
+    <div class="filters hscroll"><button data-tgroup="all" class="${cur === 'all' ? 'on' : ''}">Усі · ${items.length}</button>
+    ${groups.map(g => `<button data-tgroup="${g.id}" class="${cur === g.id ? 'on' : ''}">${g.icon} ${esc(g.name)}</button>`).join('')}</div>`;
+  for (const g of groups) {
+    if (cur !== 'all' && cur !== g.id) continue;
+    const list = items.filter(t => t.group === g.id);
+    html += `<div class="section-title">${g.icon} ${esc(g.name)}</div><div class="stack">`;
+    html += list.map(t => { const s = subj(t.subject); return `<details class="card tech" style="--c:${s.color}"><summary><div class="t">${esc(t.title)}</div><div class="meta">${esc(t.goal)}</div></summary>
+      ${t.when ? `<p class="small"><b>Коли:</b> ${esc(t.when)}</p>` : ''}
+      <ol>${t.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+      ${t.note ? `<p class="small muted">⚠️ ${esc(t.note)}</p>` : ''}
+      <p class="small muted">${esc(t.src)}${t.learn && lesson(t.learn) ? ` · <a href="#" data-open-learn="${t.learn}">повний текст</a>` : ''}</p></details>`; }).join('');
+    html += `</div>`;
+  }
+  return html;
 }
 async function renderLearn() {
   if (state.reading) {
@@ -641,7 +667,7 @@ async function renderLearn() {
     ${subjects.map(s => `<button data-lfilter="${s.id}" class="${state.learnFilter === s.id ? 'on' : ''}">${esc(s.short)}</button>`).join('')}</div>`;
   for (const s of subjects) {
     if (state.learnFilter !== 'all' && state.learnFilter !== s.id) continue;
-    const items = LEARN.filter(l => l.subject === s.id && l.kind !== 'test');
+    const items = LEARN.filter(l => l.subject === s.id && l.kind !== 'test' && l.kind !== 'tech');
     const readN = items.filter(l => l.kind !== 'qa' && state.read[l.id]).length;
     const lect = items.filter(l => l.kind !== 'qa').length;
     html += `<div class="section-title" style="display:flex;justify-content:space-between">${esc(s.short)}<span>${lect ? `${readN}/${lect} прочитано` : ''}</span></div>`;
@@ -699,6 +725,7 @@ function answerCard(yes) {
   state.deck.cur = null; render(); window.scrollTo({ top: 0 });
 }
 function afterRender() {
+  if (state.tab === 'tech') { const on = view.querySelector('.filters.hscroll .on'); if (on) on.parentElement.scrollLeft = on.offsetLeft - 16; }
   const r = $('[data-reset-deck]');
   if (r) r.onclick = () => {
     for (const k of Object.keys(state.cards)) if (k.startsWith(state.deck.id + ':')) delete state.cards[k];
@@ -941,12 +968,12 @@ function profileSheet() {
 }
 
 // ---------- головний цикл ----------
-const TITLES = { today: 'Сьогодні', schedule: 'Розклад', tasks: 'Завдання', learn: 'Вчити', tests: 'Тести', progress: 'Прогрес' };
+const TITLES = { today: 'Сьогодні', schedule: 'Розклад', tasks: 'Завдання', learn: 'Вчити', tech: 'Техніки', tests: 'Тести', progress: 'Прогрес' };
 function render() {
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
   document.querySelectorAll('#progbar button').forEach(b => b.classList.toggle('on', b.dataset.prog === state.program));
   $('#screen-title').innerHTML = (state.tab === 'today' ? mascot('proud') : '') + TITLES[state.tab];
-  const fn = { today: renderToday, schedule: renderSchedule, tasks: renderTasks, learn: renderLearn, tests: renderTests, progress: renderProgress }[state.tab];
+  const fn = { today: renderToday, schedule: renderSchedule, tasks: renderTasks, learn: renderLearn, tech: renderTech, tests: renderTests, progress: renderProgress }[state.tab];
   const out = fn();
   if (out instanceof Promise) out.then(h => { view.innerHTML = h; afterRender(); }); else { view.innerHTML = out; afterRender(); }
 }
@@ -966,6 +993,7 @@ view.addEventListener('click', e => {
   if (e.target.closest('[data-toggle-done]')) { state.showDone = !state.showDone; store.set('showDone', state.showDone); return render(); }
   if (e.target.closest('[data-add]')) return addSheet();
   const st = e.target.closest('[data-step]'); if (st) { toggleStep(st.dataset.step); return render(); }
+  const tg = e.target.closest('[data-tgroup]'); if (tg) { state.techGroup = tg.dataset.tgroup; store.set('techGroup', state.techGroup); return render(); }
   const tm = e.target.closest('[data-tmode]'); if (tm) { state.testMode = tm.dataset.tmode; store.set('testMode', state.testMode); return render(); }
   const ss = e.target.closest('[data-start-scale]'); if (ss) return startScale(ss.dataset.startScale);
   const sp = e.target.closest('[data-spick]'); if (sp) return pickScale(+sp.dataset.spick);
@@ -979,7 +1007,7 @@ view.addEventListener('click', e => {
   if (e.target.closest('[data-quiz-wrong]')) { const z = state.quiz; const w = z.wrong; if (z.id === 'mix') { state.quiz = { id: 'mix', items: shuffle(w).map(it => ({ ...it, perm: shuffle([0, 1, 2, 3]) })), pos: 0, picked: null, score: 0, wrong: [] }; render(); return window.scrollTo({ top: 0 }); } return startQuiz(z.id, w.map(it => it.qi)); }
   const ol = e.target.closest('[data-open-learn]'); if (ol) { state.quiz = null; return openLearn(ol.dataset.openLearn); }
   const lf = e.target.closest('[data-lfilter]'); if (lf) { state.learnFilter = lf.dataset.lfilter; store.set('learnFilter', state.learnFilter); return render(); }
-  if (e.target.closest('[data-back]')) { state.reading = null; state.deck = null; render(); return window.scrollTo({ top: 0 }); }
+  if (e.target.closest('[data-back]')) { state.reading = null; state.deck = null; if (state.backTab) { state.tab = state.backTab; state.backTab = null; store.set('tab', state.tab); } render(); return window.scrollTo({ top: 0 }); }
   if (e.target.closest('[data-mark-read]')) { const id = e.target.closest('[data-mark-read]').dataset.markRead; state.read[id] = !state.read[id]; store.set('read', state.read); if (state.read[id]) toast('Прочитано 📖'); return render(); }
   if (e.target.closest('[data-reveal]')) { state.deck.shown = true; return render(); }
   const ans = e.target.closest('[data-answer]'); if (ans) return answerCard(ans.dataset.answer === 'yes');
@@ -1004,6 +1032,7 @@ async function init() {
     try { QUIZ = await (await fetch('data/learn/quiz.json', { cache: 'no-cache' })).json(); } catch { QUIZ = {}; }
     LEARN = LEARN.concat((QUIZ._tests || []).map(t => ({ ...t, kind: 'test' })));
     try { SCALES = await (await fetch('data/learn/scales.json', { cache: 'no-cache' })).json(); } catch { SCALES = []; }
+    try { TECH = await (await fetch('data/learn/techniques.json', { cache: 'no-cache' })).json(); } catch { TECH = { groups: [], items: [] }; }
   } catch {
     view.innerHTML = cheer('Не вдалося завантажити дані. Перевір інтернет і онови сторінку.', 'sad');
     return;
@@ -1015,7 +1044,7 @@ async function init() {
   // ?p=knu — посилання на версію лише з Каразіним, ?p=all — обидві програми
   const p = qs.get('p');
   if (p === 'knu' || p === 'all') { state.profile = p; store.set('profile', p); if (p === 'all') { state.program = 'all'; store.set('program', 'all'); } history.replaceState(null, '', location.pathname); }
-  if (state.profile === 'knu' && !['today', 'schedule', 'tasks', 'learn', 'tests', 'progress'].includes(state.tab)) state.tab = 'today';
+  if (state.profile === 'knu' && !['today', 'schedule', 'tasks', 'learn', 'tech', 'tests', 'progress'].includes(state.tab)) state.tab = 'today';
   applyProfile();
   render();
   if (!state.profile) profileSheet();
