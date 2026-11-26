@@ -157,7 +157,7 @@
   "date": "2026-11-17",
   "file": "mil-8.html",
   "points": 0,
-  "minutes": 17
+  "minutes": 21
  },
  {
   "id": "mil-9",
@@ -167,7 +167,17 @@
   "date": "2026-11-19",
   "file": "mil-9.html",
   "points": 0,
-  "minutes": 31
+  "minutes": 32
+ },
+ {
+  "id": "mil-8t",
+  "subject": "mil",
+  "kind": "ref",
+  "title": "Техніки роботи з горем і провиною (матеріали до лекції 8)",
+  "date": "2026-11-17",
+  "file": "mil-8t.html",
+  "points": 0,
+  "minutes": 11
  },
  {
   "id": "mil-ref",
