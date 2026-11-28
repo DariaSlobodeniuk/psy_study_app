@@ -180,6 +180,16 @@
   "minutes": 11
  },
  {
+  "id": "mil-12",
+  "subject": "mil",
+  "kind": "lecture",
+  "title": "Лекція 12. Когнітивно-поведінкові методи консультування",
+  "date": "2026-11-28",
+  "file": "mil-12.html",
+  "points": 0,
+  "minutes": 15
+ },
+ {
   "id": "mil-ref",
   "subject": "mil",
   "kind": "ref",
